@@ -1,0 +1,17 @@
+# Local-only files
+test-files/
+*.local.md
+notes-private.md
+
+# Playwright / Node
+node_modules/
+.env
+automation/playwright-report/
+automation/test-results/
+automation/blob-report/
+automation/playwright/.auth/
+
+# OS / editor
+Thumbs.db
+.DS_Store
+.vscode/

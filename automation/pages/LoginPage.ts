@@ -37,7 +37,8 @@ export class LoginPage {
   }
 
   async expectLoggedIn() {
-    await expect(this.page).toHaveURL(/\/dashboard\/index/);
+    // The first login after the server has been idle can take 10+ s (cold PHP caches).
+    await expect(this.page).toHaveURL(/\/dashboard\/index/, { timeout: 20_000 });
     await expect(this.page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
   }
 

@@ -13,9 +13,11 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  // The local Docker OrangeHRM can't serve 4+ browsers at once: page loads time out.
-  // 2 workers ran 12/12 green; raise with WORKERS=n on a faster server.
-  workers: Number(process.env.WORKERS ?? 2),
+  // The local Docker OrangeHRM stops answering some requests under concurrent load:
+  // 4 workers broke the login tests, and 2 workers made the multi-user Leave flows flaky
+  // (pages stalled with images/fonts never returned). 1 worker is reliable.
+  // Raise with WORKERS=n on a faster server (e.g. CI).
+  workers: Number(process.env.WORKERS ?? 1),
   reporter: [['html', { open: 'never' }], ['list']],
 
   use: {

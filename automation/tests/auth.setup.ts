@@ -8,6 +8,10 @@ import { env, STORAGE_STATE } from '../utils/env';
  * Tests then reuse it with: test.use({ storageState: STORAGE_STATE.admin })
  */
 
+// The setup is usually the first thing to hit a cold server (slow first page loads),
+// so it gets more time than a normal test.
+setup.setTimeout(90_000);
+
 setup('authenticate as Admin', async ({ page }) => {
   const login = new LoginPage(page);
   await login.goto();

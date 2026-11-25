@@ -57,18 +57,18 @@ Not covered (see AC gaps): a 0-day entitlement, the limit on past dates, Comment
 |---|---|---|---|---|
 | US-LV-0001-TC-001 | Auto | Simple form validation | @regression | |
 | US-LV-0001-TC-002 | Auto | Data-driven: one test, many values | @regression | |
-| US-LV-0001-TC-003 | Auto | Core setup flow; also reused as API setup | @smoke | |
-| US-LV-0002-TC-001 | Auto | Main happy path + balance | @smoke | |
+| US-LV-0001-TC-003 | Auto | Core setup flow; also reused as API setup | @smoke | `automation/tests/ui/leave.spec.ts` ✅ |
+| US-LV-0002-TC-001 | Auto | Main happy path + balance | @smoke | `automation/tests/ui/leave.spec.ts` ✅ |
 | US-LV-0002-TC-002 | Auto | Half-day rule | @regression | |
 | US-LV-0002-TC-003 | Auto | Day-count calculation, high risk | @regression | |
 | US-LV-0002-TC-004 | Auto | Date rules (pass "yesterday" dynamically) | @regression | |
 | US-LV-0003-TC-001 | Auto | Multi-role visibility | @regression | |
-| US-LV-0003-TC-002 | Auto | Core approval flow | @smoke | |
+| US-LV-0003-TC-002 | Auto | Core approval flow | @smoke | `automation/tests/ui/leave.spec.ts` ✅ |
 | US-LV-0003-TC-003 | Auto | Reject + balance restore | @regression | |
 | US-LV-0003-TC-004 | Auto | Cancel + balance restore | @regression | |
 | US-LV-0003-TC-005 | Auto | Admin override | @regression | |
-| US-LV-0003-TC-006 | Auto | Access control (also an API 403 check) | @smoke | |
-| US-LV-0004-TC-001 | Auto | Key business rule | @smoke | |
+| US-LV-0003-TC-006 | Auto | Access control (also an API 403 check) | @smoke | `automation/tests/ui/leave.spec.ts` ✅ |
+| US-LV-0004-TC-001 | Auto | Key business rule | @smoke | `automation/tests/ui/leave.spec.ts` ✅ |
 | US-LV-0004-TC-002 | Auto | Overlap rules | @regression | |
 | US-LV-0004-TC-003 | Auto | Validation | @regression | |
 | US-LV-0004-TC-004 | Auto | Half-day overlap rule | @regression | |

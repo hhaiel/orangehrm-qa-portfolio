@@ -54,7 +54,7 @@
 - **AC8:** ✅ The logged-in Admin's own employee record has no delete icon.
 
 **Open questions:**
-- What happens to a deleted employee's login? **(verify)**
+- ✅ What happens to a deleted employee's login? Answered while building the automation: deleting an employee (UI or API) **also deletes their user account** (confirmed via the Users API, 2026-11-25).
 - Past (terminated) employees aren't in the test data, so "Current and Past Employees" is out of scope.
 
 ---

@@ -4,7 +4,7 @@
 **Version:** OrangeHRM OS 5.9 (local Docker, `docker/docker-compose.yml`)
 **Roles involved:** Admin, Supervisor (ESS with a subordinate), Employee (ESS)
 **Source of rules:** reverse-engineered from OrangeHRM behavior + standard HR expectations
-**Status:** REVIEWED 2026-11-25. ACs were verified against the running app (see the verification log at the bottom). ✅ = confirmed in the app. Items still marked **(verify)** weren't on the checklist and will be confirmed during test execution.
+**Status:** REVIEWED and EXECUTED 2026-11-25. ✅ = confirmed during verification. Items marked **(verify)** were confirmed during test execution: every AC passed except US-LV-0001 AC3's negative-number rule (DEF-001). See [`test-cases/TC-LV.md`](../test-cases/TC-LV.md).
 
 **Shared test data** (see `docs/test-data.md`):
 - Employee: **QA_AV Ellie Employee** (ESS user `qa_av_emp`), supervisor **QA_AV Sam Supervisor** (`qa_av_super`, Direct report)

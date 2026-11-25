@@ -26,17 +26,18 @@
 
 | Metric | Value |
 |---|---|
-| User stories | [n] |
-| Manual test cases written | [n] |
-| Executed / Passed / Failed / Blocked | [n] / [n] / [n] / [n] |
-| Defects logged | [n] ([x] High, [y] Medium, [z] Low) |
+| User stories | 4 (Leave) · [PIM, Admin to come] |
+| Manual test cases written | 17 (Leave) |
+| Executed / Passed / Failed / Blocked | 17 / 16 / 1 / 0 |
+| Defects logged | 2 (0 High, 0 Medium, 2 Low; 1 needs confirmation) + 6 observations |
 | Automated tests (UI / API) | [n] / [n] |
 | Manual cases automated | [n] of [n] ([%]) |
 
 **Top findings:**
-1. [DEF-00X: one-line title]
-2. [DEF-00X: one-line title]
-3. [DEF-00X: one-line title]
+1. DEF-001: negative leave entitlement shows a misleading "decimal places" error
+2. DEF-002: a 0-day entitlement passes validation (needs confirmation)
+3. Observation: cancelling leave happens in one click, with no confirmation
+<!-- Update as PIM/Admin testing adds findings. -->
 
 ## Repo structure
 

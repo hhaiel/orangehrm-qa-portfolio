@@ -6,8 +6,8 @@ One file per module, created from `templates/test-case-template.md`. These files
 |---|---|---|---|---|---|---|
 | `TC-AD.md` | Admin › User Management | | | | | |
 | `TC-PIM.md` | PIM | | | | | |
-| `TC-LV.md` | Leave | 17 | 0 | | | |
-| **Total** | | 17 | 0 | | | |
+| `TC-LV.md` | Leave | 17 | 17 | 16 | 1 | 0 |
+| **Total** | | 17 | 17 | 16 | 1 | 0 |
 
 Exploratory session notes: `EXP-<MOD>-<n>.md` (from `templates/exploratory-session-template.md`).
 

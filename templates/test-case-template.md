@@ -1,7 +1,7 @@
 # Test Cases: [Module name] ([MOD])
 
-> Copy to `test-cases/TC-<MOD>.md`. Generate rows with the **test-case-writer** skill, then paste here **and** into the Google Sheet (Test Cases tab).
-> Columns match the sheet exactly. Don't reorder.
+> Copy to `test-cases/TC-<MOD>.md`. Generate rows with the **test-case-writer** skill, then paste here. This file is the record.
+> Columns match the skill's output exactly. Don't reorder. Tip: VS Code's "Markdown All in One" extension formats tables (Shift+Alt+F).
 
 **Source stories:** `user-stories/US-[MOD].md`
 **Browser:** [e.g. Chrome 1xx]

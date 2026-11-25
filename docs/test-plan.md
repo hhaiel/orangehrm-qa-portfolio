@@ -78,8 +78,8 @@ See [test-data.md](test-data.md). Minimum: 1 Admin, 1 ESS employee with a superv
 |---|---|
 | Test plan | `docs/test-plan.md` |
 | User stories + ACs | `user-stories/` |
-| Test cases | `test-cases/` + Google Sheet |
-| Defect log + reports | `defects/` + Google Sheet |
+| Test cases | `test-cases/` |
+| Defect log + reports | `defects/` + Jira project `OHRM` (screenshots in `evidence/jira/`) |
 | Evidence | `evidence/` |
 | Automation suite (UI + API) | `automation/` |
 | CI pipeline + HTML report | `.github/workflows/`, GitHub Actions artifacts |

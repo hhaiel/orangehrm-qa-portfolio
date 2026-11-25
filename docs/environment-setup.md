@@ -66,4 +66,6 @@ volumes:
 | DevTools › Console | Catch JS errors to mention in defects |
 | ShareX / Snipping Tool (Win+Shift+S) | Screenshots → `evidence/` |
 | Xbox Game Bar (Win+G) / ShareX | Short screen recordings for tricky bugs |
-| Google Sheets | Test case sheet + defect log |
+| Jira (free) | Defect tracking, see [jira-setup.md](jira-setup.md) |
+| VS Code: Markdown All in One, Rainbow CSV | Editing test case and defect tables |
+| Google Sheets (optional) | Scratchpad during execution; copy results back to Markdown |

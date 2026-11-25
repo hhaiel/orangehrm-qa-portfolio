@@ -28,7 +28,10 @@ Phase 6  Report + polish             1 day
 - [ ] `git init`, first commit, create a **public** GitHub repo, push
 - [ ] Log in to the demo, open the user menu › **About**, and record the version in `README.md` + `docs/test-plan.md`
 - [ ] Explore Admin, PIM and Leave for 30 min using [docs/module-reference.md](docs/module-reference.md) as a map
-- [ ] Create a Google Sheet with two tabs, **Test Cases** and **Defect Log** (columns in `templates/`)
+- [ ] Set up a free Jira site + `OHRM` project for defects: follow [docs/jira-setup.md](docs/jira-setup.md) (can wait until Phase 2)
+- [ ] VS Code extensions: **Markdown All in One** (table editing) and **Rainbow CSV**
+
+> **Where things are recorded:** Markdown in this repo is the source of truth (stories, test cases, defect log). Jira is for managing defects. Google Sheets is an optional scratchpad during execution. Copy final results back to Markdown and don't maintain both.
 
 **Done when:** repo is on GitHub, version recorded, tools installed.
 
@@ -52,11 +55,11 @@ Scope is **Leave + PIM** in depth, plus **Admin › Users** lightly. OrangeHRM h
 **Done when:** 3 story files, no `[placeholders]`.
 
 ## Phase 2: Manual test cases + defects (3–4 days)
-- [ ] Run each story file through the **test-case-writer** skill → `test-cases/TC-<MOD>.md` + Sheet
+- [ ] Run each story file through the **test-case-writer** skill → `test-cases/TC-<MOD>.md`
 - [ ] Target **25–30 test cases total**
-- [ ] Mark each case **Auto** / **Manual-only** in the "Automation candidates" table of each `TC-<MOD>.md` (and as an extra last column in the Sheet). Manual-only examples: visual checks, one-off exploratory cases
+- [ ] Mark each case **Auto** / **Manual-only** in the "Automation candidates" table of each `TC-<MOD>.md`. Manual-only examples: visual checks, one-off exploratory cases
 - [ ] Execute all cases, fill in Status + Actual Results, save evidence to `evidence/`
-- [ ] Failures → **bug-hunter** skill → `defects/defect-log.md`. Full reports for your **3 best bugs**
+- [ ] Failures → **bug-hunter** skill → `defects/defect-log.md` → create the Bug in Jira and put its key (`OHRM-n`) in the Notes column. Full reports for your **3 best bugs**
 - [ ] Optional: one 60-min exploratory session (`templates/exploratory-session-template.md`)
 
 **Done when:** all cases executed, defects logged, 15–20 cases marked "Auto".
@@ -112,6 +115,7 @@ automation/
 ## Phase 6: Report + polish (1 day)
 - [ ] Fill in [docs/test-summary-report.md](docs/test-summary-report.md) (manual + automation results)
 - [ ] README: results table, top findings, CI badge, "how to run the tests", **test design decisions** section
+- [ ] Jira screenshots (board + best bug ticket) in `evidence/jira/` and a "Defect tracking in Jira" README section ([docs/jira-setup.md](docs/jira-setup.md) step 8)
 - [ ] Short demo GIF of a test run in headed/UI mode (`npx playwright test --ui`)
 - [ ] Remove all `[placeholders]`, re-read everything once
 - [ ] Pin the repo on GitHub; add it to CV/LinkedIn as "OrangeHRM QA Automation (Playwright + TypeScript)"

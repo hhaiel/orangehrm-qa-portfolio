@@ -1,6 +1,6 @@
 # Defect Log
 
-> One row per defect. Generate rows with the **bug-hunter** skill, then paste here **and** into the Google Sheet (Defect Log tab).
+> One row per defect. Generate rows with the **bug-hunter** skill, then paste here and create the matching Bug in Jira ([docs/jira-setup.md](../docs/jira-setup.md)). Put the Jira key in Notes as `Jira: OHRM-n`.
 > Continue numbering from the last row. Full write-ups for key bugs go in `DEF-<nnn>.md` (see `templates/bug-report-template.md`).
 
 **Summary:** 0 defects (0 Critical, 0 High, 0 Medium, 0 Low) · 0 needs confirmation

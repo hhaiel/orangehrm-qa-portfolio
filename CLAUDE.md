@@ -18,7 +18,12 @@ Manual QA portfolio project testing **OrangeHRM Open Source 5.x**. Read this bef
 | Defect | `DEF-<3 digits>`, global sequence | `DEF-012` |
 | Evidence file | `<TC or DEF ID>[-n].png` | `DEF-012-2.png` |
 
-## Formats (must match the skills and the Google Sheet)
+## Where things live
+- Markdown in this repo is the **source of truth** for stories, test cases and the defect log.
+- Defects are also tracked in **Jira** (project key `OHRM`, see `docs/jira-setup.md`). The Jira key goes in the defect log's Notes column as `Jira: OHRM-n`.
+- Google Sheets is optional scratch space only. Never treat it as the record.
+
+## Formats (must match the skills)
 - **Test cases** (use the `test-case-writer` skill), columns in order:
   `Test Case ID | Feature Name | Test Case/Scenario | Pre-requisite | Test Steps | Test Data | Expected Results | Browsers | Status | Actual Results`
 - **Defects** (use the `bug-hunter` skill), columns in order:

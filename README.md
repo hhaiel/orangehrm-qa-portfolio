@@ -18,7 +18,7 @@
 | **Automation stack** | Playwright, TypeScript, Page Object Model, GitHub Actions |
 | **Browsers** | [e.g. Chromium, Firefox (automated); Chrome (manual)] |
 | **Test period** | [start date] – [end date] |
-| **Tools** | Playwright, VS Code, Docker, GitHub Actions, Google Sheets (test cases and defect log) |
+| **Tools** | Playwright, VS Code, Docker, GitHub Actions, Jira (defect tracking), Markdown (test documentation) |
 
 ## Results summary
 
@@ -50,6 +50,7 @@ orangehrm-qa-portfolio/
 │   ├── module-reference.md       ← what each module does, its rules, test ideas
 │   ├── test-data.md              ← test accounts and records, naming rules
 │   ├── environment-setup.md      ← demo site vs. local Docker install
+│   ├── jira-setup.md             ← how defects are tracked in Jira
 │   └── test-summary-report.md    ← final results (fill in at the end)
 ├── templates/                    ← copy these to start new work
 ├── user-stories/                 ← US + AC per module

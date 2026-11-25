@@ -28,7 +28,7 @@
 |---|---|
 | User stories | 9 (Leave 4, PIM 3, Admin 2) |
 | Manual test cases written | 32 (Leave 17, PIM 9, Admin 6) |
-| Executed / Passed / Failed / Blocked | 17 / 16 / 1 / 0 (Leave; PIM and Admin not yet executed) |
+| Executed / Passed / Failed / Blocked | 31 / 26 / 5 / 0 (84% pass; 1 manual photo case not run) |
 | Defects logged | 6 (0 High, 2 Medium, 4 Low; 1 needs confirmation) + 8 observations |
 | Automated tests (UI / API) | [n] / [n] |
 | Manual cases automated | [n] of [n] ([%]) |

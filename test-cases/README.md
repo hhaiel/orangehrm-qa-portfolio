@@ -4,10 +4,12 @@ One file per module, created from `templates/test-case-template.md`. These files
 
 | File | Module | # Cases | Executed | Pass | Fail | Blocked |
 |---|---|---|---|---|---|---|
-| `TC-AD.md` | Admin › User Management | 6 | 0 | | | |
-| `TC-PIM.md` | PIM | 9 | 0 | | | |
+| `TC-AD.md` | Admin › User Management | 6 | 6 | 5 | 1 | 0 |
+| `TC-PIM.md` | PIM | 9 | 8 | 5 | 3 | 0 |
 | `TC-LV.md` | Leave | 17 | 17 | 16 | 1 | 0 |
-| **Total** | | 32 | 17 | 16 | 1 | 0 |
+| **Total** | | 32 | 31 | 26 | 5 | 0 |
+
+1 Not Run: US-PIM-0001-TC-005 (photo upload, manual only).
 
 Exploratory session notes: `EXP-<MOD>-<n>.md` (from `templates/exploratory-session-template.md`).
 

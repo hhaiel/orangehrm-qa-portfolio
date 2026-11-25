@@ -18,7 +18,11 @@ The public demo is **shared by everyone** and **resets periodically**. Other tes
 | Employee (ESS) | `qa_av_emp` | QA_AV Ellie Employee | Main ESS test user |
 | Disabled user | `qa_av_disabled` | QA_AV Dan Disabled (#0007) | Status = Disabled, for login tests (created 2026-11-25) |
 | Non-subordinate | `qa_av_other` | QA_AV Olivia Other (#0005) | Doesn't report to Sam; 5 days QA_AV Vacation |
-| No login | – | QA_AV Nina New (#0004) | Used for entitlement and Add User tests |
+| Nina | `qa_av_nina` (created in US-AD-0001-TC-002) | QA_AV Nina Updated (#0004) | Last name changed in US-PIM-0003-TC-001; 8 days QA_AV Vacation |
+| Lisa | `qa_av_lisa` | QA_AV Lisa Login (#0010) | Created in US-PIM-0001-TC-004 |
+| No login | – | QA_AV Paul Plain (#0008), QA_AV Trim Check (#0009) | Created in US-PIM-0001-TC-001/002 (Trim Check keeps the DEF-003 spaces) |
+
+> To rerun PIM/Admin cases on a clean slate, delete Paul, Trim Check, Lisa and the `qa_av_nina` user first, or reinstall with `docker compose -p orangehrm down -v`.
 
 **Passwords:** use one test password for all QA users and keep it **only in `docker/.env`** (`TEST_USER_PASSWORD`, git-ignored), never in a committed file. A public repo with passwords looks bad even when they're test-only.
 

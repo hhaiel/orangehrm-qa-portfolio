@@ -30,7 +30,7 @@
 | Manual test cases written | 32 (Leave 17, PIM 9, Admin 6) |
 | Executed / Passed / Failed / Blocked | 32 / 26 / 6 / 0 (81% pass) |
 | Defects logged | 7 (0 High, 2 Medium, 5 Low; 1 needs confirmation) + 8 observations |
-| Automated tests (UI / API) | [n] / [n] |
+| Automated tests (UI / API) | 5 / 0 (+2 auth setup), all passing. Phase 3 in progress |
 | Manual cases automated | [n] of [n] ([%]) |
 
 **Top findings:**
@@ -64,17 +64,19 @@ orangehrm-qa-portfolio/
 
 ## Running the automated tests
 
-<!-- Finish this in Phase 3. -->
+Requires the local OrangeHRM from `docker/` to be running (see [docs/environment-setup.md](docs/environment-setup.md)).
 
 ```powershell
 cd automation
 npm ci
-npx playwright install --with-deps
-copy .env.example .env   # then fill in the URL and credentials
-npx playwright test               # all tests
-npx playwright test --grep @smoke # smoke subset
-npx playwright show-report        # open the HTML report
+npx playwright install chromium
+copy .env.example .env   # then fill in the same test values as docker/.env
+npm test                 # all tests
+npm run test:smoke       # @smoke subset
+npm run report           # open the HTML report
 ```
+
+Details, conventions and the current suite status are in [automation/README.md](automation/README.md).
 
 ## How to read this project
 

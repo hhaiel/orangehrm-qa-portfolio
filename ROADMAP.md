@@ -65,13 +65,13 @@ Scope is **Leave + PIM** in depth, plus **Admin › Users** lightly. OrangeHRM h
 **Done when:** all cases executed, defects logged, 15–20 cases marked "Auto".
 
 ## Phase 3: Playwright foundations (2–3 days)
-- [ ] Run OrangeHRM locally with Docker ([docs/environment-setup.md](docs/environment-setup.md), Option B) and seed test data
-- [ ] Scaffold `automation/`: `npm init playwright@latest` (TypeScript, Chromium first)
-- [ ] `playwright.config.ts`: `baseURL` from `.env`, trace/screenshot/video on failure, HTML report
-- [ ] `.env.example` committed, `.env` git-ignored (holds URL + test credentials)
-- [ ] **Auth setup project:** log in once as Admin and once as ESS, save `storageState`, so tests don't log in every time
-- [ ] First real test: login happy path + invalid credentials
-- [ ] Use `npx playwright codegen <url>` to explore locators, then clean them up into role/label-based locators
+- [x] Run OrangeHRM locally with Docker ([docs/environment-setup.md](docs/environment-setup.md), Option B) and seed test data
+- [x] Scaffold `automation/` (TypeScript, Chromium; set up by hand to match this structure)
+- [x] `playwright.config.ts`: `baseURL` from `.env`, trace/screenshot/video on failure, HTML report, 2 workers (4 overloaded the local server)
+- [x] `.env.example` committed, `.env` git-ignored (holds URL + test credentials)
+- [x] **Auth setup project:** log in once as Admin and once as ESS, save `storageState`, so tests don't log in every time
+- [x] First real tests: login happy path, invalid credentials, required fields, disabled user (US-AD-0001-TC-004), saved session
+- [ ] Use `npx playwright codegen <url>` to explore locators for the next screens, then clean them up into role/label-based locators
 
 **Done when:** `npx playwright test` passes locally with login tests and a report opens.
 

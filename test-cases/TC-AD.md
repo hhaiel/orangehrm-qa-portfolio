@@ -42,7 +42,7 @@
 | US-AD-0001-TC-001 | Auto | Form validation | @regression | |
 | US-AD-0001-TC-002 | Auto | Create user + filters (clean up via API) | @smoke | |
 | US-AD-0001-TC-003 | Auto | Role change across two logins | @regression | |
-| US-AD-0001-TC-004 | Auto | Login security messages | @smoke | |
+| US-AD-0001-TC-004 | Auto | Login security messages | @smoke | `automation/tests/ui/login.spec.ts` ✅ |
 | US-AD-0002-TC-001 | Auto | Access control (UI + API 403 checks) | @smoke | |
 | US-AD-0002-TC-002 | Auto | Supervisor data scope | @regression | |
 

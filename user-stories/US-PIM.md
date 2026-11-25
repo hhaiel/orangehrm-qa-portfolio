@@ -23,7 +23,7 @@
 - **AC2:** ✅ First Name and Last Name are required ("Required"); Middle Name is optional. Names longer than 30 characters show "Should not exceed 30 characters".
 - **AC3:** ❌ Leading and trailing spaces in names are removed before saving. Actual: they're stored as typed, e.g. `"  QA_AV Spaces  "`, and the record sorts to the top of the Employee List (DEF-003).
 - **AC4:** ✅ Employee Id can be edited. An Id that already exists shows "Employee Id already exists" as soon as the field loses focus, and Save is blocked.
-- **AC5:** A jpg, png or gif photo up to 1 MB is accepted and previewed. Other file types or larger files are rejected with a message. **(verify: not checked, since the test browser can't upload local files. Run manually.)**
+- **AC5:** A jpg, png or gif photo up to 1 MB is accepted and previewed (✅ 200×200 jpg). Other file types are rejected with a message about the file type: ❌ a pdf is rejected, but the message says "Attachment Size Exceeded" (DEF-007). Files over 1 MB are rejected with a size message **(verify: not recorded in the manual run)**.
 - **AC6:** Turning on Create Login Details shows Username, Status (Enabled / Disabled, ✅ default Enabled), Password and Confirm Password.
   - ✅ Username, Password and Confirm Password are required. ❌ An empty Confirm Password shows "Passwords do not match" instead of "Required" (DEF-005).
   - ✅ Username needs at least 5 characters ("Should be at least 5 characters") and must be unique, case-insensitively ("Username already exists" for `qa_av_emp` and `QA_AV_EMP`).
@@ -73,7 +73,7 @@
 - **AC3:** Saved changes are still there after reloading the page, and the new name shows in the Employee List.
 - **AC4:** ✅ First Name and Last Name stay required. Clearing Last Name and saving shows "Required", and nothing is saved.
 - **AC5:** ❌ Date of Birth can't be in the future. Actual: 2030-01-01 is accepted with no message and saved (DEF-004).
-- **AC6:** Clicking the profile picture lets me upload a new photo with the same rules as US-PIM-0001 AC5. **(verify manually: file upload)**
+- **AC6:** ✅ Clicking the profile picture lets me upload a new photo with the same rules as US-PIM-0001 AC5. Changing it to a new 200×200 jpg worked (manual run, 2026-11-25).
 
 ---
 

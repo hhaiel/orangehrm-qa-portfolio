@@ -12,7 +12,7 @@
 | | |
 |---|---|
 | **Application under test** | OrangeHRM Open Source 5.x ([public demo](https://opensource-demo.orangehrmlive.com)) |
-| **Version tested** | [e.g. OrangeHRM OS 5.7, shown under the user menu → About] |
+| **Version tested** | OrangeHRM OS 5.9 (public demo, checked 2026-11-25) |
 | **Modules in scope** | Leave, PIM, Admin (User Management) |
 | **Testing type** | Functional, role-based access, negative/boundary, UI automation, API testing |
 | **Automation stack** | Playwright, TypeScript, Page Object Model, GitHub Actions |

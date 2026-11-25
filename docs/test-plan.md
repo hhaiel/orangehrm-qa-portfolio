@@ -14,7 +14,7 @@ Verify that the core HR workflows of OrangeHRM Open Source work correctly for Ad
 | | |
 |---|---|
 | Product | OrangeHRM Open Source |
-| Version | [5.x, from user menu → About] |
+| Version | OrangeHRM OS 5.9 (user menu → About, checked 2026-11-25; demo had 166 active / 1 terminated employees) |
 | Environment | [Public demo: https://opensource-demo.orangehrmlive.com] / [Local Docker: http://localhost:8080] |
 | Type | Web application (PHP/Vue, REST API at `/web/index.php/api/v2`) |
 

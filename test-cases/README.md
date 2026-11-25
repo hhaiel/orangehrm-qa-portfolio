@@ -4,10 +4,10 @@ One file per module, created from `templates/test-case-template.md`. These files
 
 | File | Module | # Cases | Executed | Pass | Fail | Blocked |
 |---|---|---|---|---|---|---|
-| `TC-AD.md` | Admin › User Management | | | | | |
-| `TC-PIM.md` | PIM | | | | | |
+| `TC-AD.md` | Admin › User Management | 6 | 0 | | | |
+| `TC-PIM.md` | PIM | 9 | 0 | | | |
 | `TC-LV.md` | Leave | 17 | 17 | 16 | 1 | 0 |
-| **Total** | | 17 | 17 | 16 | 1 | 0 |
+| **Total** | | 32 | 17 | 16 | 1 | 0 |
 
 Exploratory session notes: `EXP-<MOD>-<n>.md` (from `templates/exploratory-session-template.md`).
 

@@ -1,0 +1,66 @@
+# Test Cases: PIM
+
+**Source stories:** [`user-stories/US-PIM.md`](../user-stories/US-PIM.md) (US-PIM-0001 to 0003, reviewed 2026-11-25)
+**Browser:** Chromium
+**Version:** OrangeHRM OS 5.9 (local Docker, http://localhost:8080)
+
+**Test data** (see [`docs/test-data.md`](../docs/test-data.md)):
+- Admin `qa_admin`. Existing employees: Sam (0002), Ellie (0003, reports to Sam), Nina (0004), Olivia (0005), Dan (0007).
+- **Valid test password:** use `TEST_USER_PASSWORD` from `docker/.env` (never write it in this file).
+- Test files for TC-006 (local `test-files/`, git-ignored): `photo-200x200.jpg` (< 1 MB), `photo-2mb.jpg` (> 1 MB), `not-an-image.pdf`.
+- New employees created here use the `QA_AV` prefix. Employee Ids are auto-generated (next is 0008 at the time of writing).
+
+## AC gaps found
+- **US-PIM-0001 AC5 / US-PIM-0003 AC6:** the exact error messages for a wrong file type or an oversized photo aren't known (not verified; file upload must be tested manually). TC-006 expects "a message", and the tester records the exact text.
+- **US-PIM-0001 AC6:** the password rule order isn't defined (the app shows one rule at a time). TC-003 checks each rule with a password that breaks only that rule.
+- **US-PIM-0002:** what happens to a deleted employee's login isn't defined. Not covered.
+- **US-PIM-0002 AC1:** Employment Status, Job Title and Sub Unit filters aren't covered, because the test data has no values for them.
+- **US-PIM-0003 AC2:** no rules for Other Id, Driver's License or Nationality (formats, lengths). Only saving and persistence are tested.
+
+## Test cases
+
+| Test Case ID | Feature Name | Test Case/Scenario | Pre-requisite | Test Steps | Test Data | Expected Results | Browsers | Status | Actual Results |
+|---|---|---|---|---|---|---|---|---|---|
+| US-PIM-0001-TC-001 | PIM – Add Employee | Verify the Add Employee form validates names and Employee Id, and saves an employee without login (AC1, AC2, AC4, AC7, AC8) | Admin `qa_admin` is logged in | 1. Go to PIM › Add Employee<br>2. Look at the form<br>3. Click Save without entering anything<br>4. Enter First Name with 31 characters and click outside the field<br>5. Enter First Name `QA_AV Paul`, Last Name `Plain`<br>6. Change Employee Id to `0003` and click outside the field<br>7. Click Save<br>8. Change First Name back to `QA_AV Paul` and Employee Id back to the suggested value noted in step 2<br>9. Click Save<br>10. Go to Admin › User Management › Users | 31-char name: `QA_AV_abcdefghijklmnopqrstuvwxy`<br>Duplicate Id: 0003<br>Employee: QA_AV Paul Plain | 2. First/Middle/Last Name, pre-filled Employee Id, photo area ("Accepts jpg, .png, .gif up to 1MB…"), Create Login Details toggle off<br>3. "Required" under First Name and Last Name<br>4. "Should not exceed 30 characters"<br>6. "Employee Id already exists"<br>7. Not saved; still on Add Employee<br>9. Personal Details page of QA_AV Paul Plain opens<br>10. No user exists for QA_AV Paul Plain | Chromium | | |
+| US-PIM-0001-TC-002 | PIM – Add Employee | Verify leading and trailing spaces are removed from names before saving (AC3) | Admin is logged in | 1. Go to PIM › Add Employee<br>2. Enter First Name `  QA_AV Trim  ` (2 spaces before and after) and Last Name `Check`<br>3. Click Save<br>4. Go to PIM › Employee List<br>5. Look at where QA_AV Trim Check appears in the list | First Name: `␣␣QA_AV Trim␣␣` | 3. Personal Details page opens<br>5. The name is stored as "QA_AV Trim" and sorts with the other "QA_AV" employees, not at the top of the list | Chromium | | |
+| US-PIM-0001-TC-003 | PIM – Add Employee | Verify login details enforce required fields and the username and password rules (AC6) | Admin is logged in | 1. Go to PIM › Add Employee<br>2. Turn on Create Login Details<br>3. Click Save with everything empty<br>4. Enter Username `abcd` and click outside<br>5. Enter Username `QA_AV_EMP` and click outside<br>6. Enter Username `qa_av_newuser`<br>7. Enter First Name `QA_AV Rule`, Last Name `Check`<br>8. For each password in Test Data: enter it in Password and Confirm Password, click Save, and note the message<br>9. Enter a valid password and a different Confirm Password, click Save | Passwords (each breaks one rule):<br>`Abc1!` → length<br>`abcdef1!` → upper-case<br>`ABCDEF1!` → lower-case<br>`Abcdefg!` → number<br>`Abcdefg1` → special<br>Valid: `TEST_USER_PASSWORD` | 2. Username, Status (Enabled selected), Password, Confirm Password appear<br>3. "Required" under names, Username, Password **and Confirm Password**<br>4. "Should be at least 5 characters"<br>5. "Username already exists"<br>6. No username error<br>8. "Should have at least 8 characters"; "…minimum 1 upper-case letter"; "…minimum 1 lower-case letter"; "…minimum 1 number"; "…minimum 1 special character". Each message replaces the previous one as soon as the password changes<br>9. "Passwords do not match"; nothing saved | Chromium | | |
+| US-PIM-0001-TC-004 | PIM – Add Employee | Verify an employee created with login details gets an ESS user with the chosen status (AC6, AC7, AC8) | Admin is logged in. Username `qa_av_lisa` isn't used | 1. Go to PIM › Add Employee<br>2. Enter First Name `QA_AV Lisa`, Last Name `Login`<br>3. Turn on Create Login Details<br>4. Enter Username `qa_av_lisa`, keep Status Enabled, enter the valid password in Password and Confirm Password<br>5. Click Save<br>6. Go to Admin › User Management › Users | Employee: QA_AV Lisa Login<br>Username: qa_av_lisa<br>Password: `TEST_USER_PASSWORD` | 5. Personal Details page of QA_AV Lisa Login opens<br>6. User `qa_av_lisa` is listed with User Role ESS, Employee Name QA_AV Lisa Login, Status Enabled | Chromium | | |
+| US-PIM-0001-TC-005 | PIM – Photo | Verify profile photo upload accepts valid images and rejects wrong types and large files (AC5; also US-PIM-0003 AC6) | Admin is logged in. Test files exist in `test-files/` | 1. Go to PIM › Add Employee<br>2. Click the + on the photo and choose `not-an-image.pdf`<br>3. Choose `photo-2mb.jpg`<br>4. Choose `photo-200x200.jpg`<br>5. Enter First Name `QA_AV Pic`, Last Name `Upload` and click Save<br>6. On Personal Details, click the profile picture and upload `photo-200x200.jpg` again | Files: pdf, 2 MB jpg, 200×200 jpg | 2. A message says the file type isn't allowed; no preview<br>3. A message says the file is too large; no preview<br>4. The photo shows in the preview<br>5. Personal Details opens and shows the photo<br>6. The new photo is saved and shown | Chromium | | |
+| US-PIM-0002-TC-001 | PIM – Employee List | Verify Employee List search by partial name, Employee Id and supervisor, the no-match message, and Reset (AC1–AC6) | Admin is logged in. Ellie (0003) reports to Sam | 1. Go to PIM › Employee List (expand the filter panel if collapsed)<br>2. Type `Ellie` in Employee Name without picking a suggestion, click Search<br>3. Click Reset<br>4. Enter Employee Id `0003`, click Search<br>5. Click Reset, then pick "QA_AV Sam Supervisor" in Supervisor Name, click Search<br>6. Click Reset, type `Zzzz` in Employee Name, click Search<br>7. Click Reset | Name: Ellie<br>Id: 0003<br>Supervisor: QA_AV Sam Supervisor<br>No match: Zzzz | 1. Filters: Employee Name, Employee Id, Employment Status, Include (Current Employees Only), Supervisor Name, Job Title, Sub Unit<br>2. 1 record: 0003 QA_AV Ellie Employee<br>4. 1 record: 0003<br>5. 1 record: 0003 (Sam's only subordinate)<br>6. "No Records Found" in the list and an Info toast<br>7. All filters cleared; all current employees listed | Chromium | | |
+| US-PIM-0002-TC-002 | PIM – Employee List | Verify deleting an employee asks for confirmation, Cancel keeps the record, and the Admin's own record can't be deleted (AC7, AC8) | Admin is logged in. A disposable employee "QA_AV Temp Delete" exists | 1. Go to PIM › Employee List<br>2. Look at the Admin's own record (QA Admin, 0001)<br>3. Click the trash icon on QA_AV Temp Delete<br>4. Click No, Cancel<br>5. Click the trash icon on QA_AV Temp Delete again<br>6. Click Yes, Delete | Employee: QA_AV Temp Delete | 2. QA Admin has an edit icon but no trash icon<br>3. Dialog: "Are you Sure? The selected record will be permanently deleted. Are you sure you want to continue?" with No, Cancel / Yes, Delete<br>4. Dialog closes; QA_AV Temp Delete is still listed<br>6. "Successfully Deleted"; QA_AV Temp Delete is no longer listed | Chromium | | |
+| US-PIM-0003-TC-001 | PIM – Personal Details | Verify personal details can be edited and persist, and names stay required (AC1–AC4) | Admin is logged in. QA_AV Nina New (0004) exists | 1. Go to PIM › Employee List and open QA_AV Nina New<br>2. Look at the tabs<br>3. Clear Last Name and click Save<br>4. Enter Last Name `Updated`, Other Id `OT-123`, Marital Status Single, Gender Female, Date of Birth `1990-05-15`<br>5. Click Save<br>6. Reload the page<br>7. Go to PIM › Employee List | Last Name: Updated<br>Other Id: OT-123<br>DOB: 1990-05-15 | 2. Personal Details, Contact Details, Emergency Contacts, Dependents, Immigration, Job, Salary, Report-to, Qualifications, Memberships<br>3. "Required" under Last Name; nothing saved<br>5. "Successfully Updated"<br>6. All entered values are still shown<br>7. Nina is listed with Last Name "Updated" | Chromium | | |
+| US-PIM-0003-TC-002 | PIM – Personal Details | Verify Date of Birth can't be in the future (AC5) | Admin is logged in. Continued from TC-001 (Nina's Personal Details open) | 1. Enter Date of Birth `2030-01-01`<br>2. Click Save<br>3. Reload the page | DOB: 2030-01-01 | 1–2. A validation message under Date of Birth; nothing saved<br>3. Date of Birth still shows 1990-05-15 | Chromium | | |
+
+## Coverage
+**9 test cases.** All PIM ACs are covered:
+
+| Story | AC → Test case |
+|---|---|
+| US-PIM-0001 | AC1, AC2, AC4 → TC-001 · AC3 → TC-002 · AC5 → TC-005 · AC6 → TC-003, TC-004 · AC7, AC8 → TC-001, TC-004 |
+| US-PIM-0002 | AC1–AC6 → TC-001 · AC7, AC8 → TC-002 |
+| US-PIM-0003 | AC1–AC4 → TC-001 · AC5 → TC-002 · AC6 → US-PIM-0001-TC-005 (step 6) |
+
+Not covered (see AC gaps): deleted employee's login, the Employment Status / Job Title / Sub Unit filters, and field formats on Personal Details.
+
+**Expected failures (from verification):** TC-002 (DEF-003), TC-003 steps 3 and 8 (DEF-005, DEF-006), US-PIM-0003-TC-002 (DEF-004).
+
+## Automation candidates
+| Test Case ID | Auto / Manual-only | Reason | Tag | Automated in (spec file) |
+|---|---|---|---|---|
+| US-PIM-0001-TC-001 | Auto | Core create flow + validations | @smoke | |
+| US-PIM-0001-TC-002 | Auto | Regression check for DEF-003 (also easy via API) | @regression | |
+| US-PIM-0001-TC-003 | Auto | Data-driven password rules | @regression | |
+| US-PIM-0001-TC-004 | Auto | Cross-module: PIM → Admin user | @regression | |
+| US-PIM-0001-TC-005 | Auto (later) | Playwright `setInputFiles` handles uploads; needs fixture files | @regression | |
+| US-PIM-0002-TC-001 | Auto | Search filters | @smoke | |
+| US-PIM-0002-TC-002 | Auto | Delete with confirmation (create the employee via API first) | @regression | |
+| US-PIM-0003-TC-001 | Auto | Edit + persistence | @regression | |
+| US-PIM-0003-TC-002 | Auto | Regression check for DEF-004 | @regression | |
+
+## Execution log
+| Date | Environment / version | Executed | Pass | Fail | Blocked | Notes |
+|---|---|---|---|---|---|---|
+| | Local Docker, OrangeHRM OS 5.9 | | | | | |
+
+---
+**Status values:** Pass · Fail · Blocked · Not Run

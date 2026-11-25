@@ -6,6 +6,6 @@ One file per module, created from `templates/user-story-template.md`.
 |---|---|---|---|
 | `US-AD.md` | Admin › User Management | US-AD-0001 – | ☐ Draft ☐ Reviewed |
 | `US-PIM.md` | PIM | US-PIM-0001 – | ☐ Draft ☐ Reviewed |
-| `US-LV.md` | Leave | US-LV-0001 – 0004 | ☑ Draft ☐ Reviewed |
+| `US-LV.md` | Leave | US-LV-0001 – 0004 | ☑ Draft ☑ Reviewed (verified in app 2026-11-25) |
 
 The suggested story list is in `ROADMAP.md` › Phase 2. Rules and test ideas per module are in `docs/module-reference.md`.

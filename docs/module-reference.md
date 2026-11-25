@@ -77,7 +77,7 @@ Navigation paths use `›`, e.g. **Leave › Apply**.
 - You can't apply without an entitlement / enough balance (verify: "Balance not sufficient" warning or a confirm dialog)
 - Overlapping requests are blocked (verify message: "Failed to Submit" / overlapping leave)
 - Weekends (per Work Week) and Holidays are **not** counted as leave days
-- Partial days: **Half Day – Morning / Evening** and **Specify Time** (duration in hours)
+- Partial days: **Half Day - Morning (09:00–13:00) / Half Day - Afternoon (13:00–17:00)** and **Specify Time** (duration in hours). Verified on 5.9
 - Multi-day requests: partial-day options for All Days / Start Day Only / End Day Only / Start and End Day
 - To Date can't be before From Date
 - Balance = Entitlement − (Taken + Scheduled + Pending) (verify how Pending counts)

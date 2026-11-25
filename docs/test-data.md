@@ -12,12 +12,13 @@ The public demo is **shared by everyone** and **resets periodically**. Other tes
 
 | Role | Username | Employee name | Notes |
 |---|---|---|---|
-| Admin | (shown on the demo login page) | (existing) | Built-in demo admin |
+| Admin (local) | `qa_admin` | QA Admin | Created in the install wizard. Password in `docker/.env` (`ADMIN_PASSWORD`) |
+| Admin (demo) | (shown on the demo login page) | (existing) | Built-in demo admin |
 | Supervisor (ESS) | `qa_av_super` | QA_AV Sam Supervisor | Set as Report-to for the employee below |
 | Employee (ESS) | `qa_av_emp` | QA_AV Ellie Employee | Main ESS test user |
 | Disabled user | `qa_av_disabled` | QA_AV Dan Disabled | Status = Disabled, for login tests |
 
-**Passwords:** use one test password for all QA users and keep it **only in your local notes**, not in this repo. A public repo with passwords looks bad even when they're test-only.
+**Passwords:** use one test password for all QA users and keep it **only in `docker/.env`** (`TEST_USER_PASSWORD`, git-ignored), never in a committed file. A public repo with passwords looks bad even when they're test-only.
 
 ## Session setup checklist (as Admin)
 - [ ] **PIM › Add Employee**: QA_AV Sam Supervisor (with login `qa_av_super`, ESS, Enabled)

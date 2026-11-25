@@ -25,9 +25,10 @@
 ### Acceptance Criteria
 - **AC1:** ✅ Given I open Leave › Entitlements › Add Entitlements, when the page loads, then I can choose Individual Employee / Multiple Employees, Employee Name, Leave Type, Leave Period (defaults to the current period) and Entitlement.
 - **AC2:** ✅ Employee Name, Leave Type and Entitlement are required. Saving with any of them empty shows "Required" under that field.
-- **AC3:** ✅ Entitlement accepts numbers from 0 up to 9999.99 with at most 2 decimal places.
-  - Letters, negative numbers, values with spaces, or more than 2 decimals show "Should be a number with upto 2 decimal places".
-  - 10000 or more shows "Should be less than 10000".
+- **AC3:** Entitlement accepts positive numbers up to 9999.99 with at most 2 decimal places.
+  - ✅ Letters, values with spaces, or more than 2 decimals show "Should be a number with upto 2 decimal places".
+  - ✅ 10000 or more shows "Should be less than 10000".
+  - Negative numbers are rejected with a message saying the value must be positive. ❌ Actual: the "decimal places" message is shown (DEF-001).
 - **AC4:** ✅ Given valid input, when I click Save, then an "Updating Entitlement" dialog shows "Existing Entitlement value X will be updated to Y". Confirming shows "Successfully Saved" and opens that employee's Leave Entitlements list. Cancelling saves nothing.
 - **AC5:** ✅ If the employee already has an entitlement for the same leave type and period, the new value is **added** to it (e.g. 5.00 + 3 → 8.00).
 - **AC6:** ✅ The new entitlement appears in the employee's Leave Entitlements list ("Total 5.00 Day(s)"), and the employee sees the same balance on Leave › Apply.

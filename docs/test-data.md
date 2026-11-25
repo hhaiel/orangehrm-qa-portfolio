@@ -24,6 +24,8 @@ The public demo is **shared by everyone** and **resets periodically**. Other tes
 - [ ] **PIM › Add Employee**: QA_AV Sam Supervisor (with login `qa_av_super`, ESS, Enabled)
 - [ ] **PIM › Add Employee**: QA_AV Ellie Employee (with login `qa_av_emp`, ESS, Enabled)
 - [ ] **PIM › Add Employee**: QA_AV Dan Disabled (with login `qa_av_disabled`, **Disabled**)
+- [ ] **PIM › Add Employee**: QA_AV Nina New (no login, **no entitlement**). Used by US-LV-0001 entitlement tests
+- [ ] **PIM › Add Employee**: QA_AV Olivia Other (with login `qa_av_other`, ESS, Enabled, **does not report to Sam**). Used by US-LV-0003 tests. Give her a QA_AV Vacation entitlement too
 - [ ] Ellie › **Report-to** tab: add Sam as Supervisor
 - [ ] **Leave › Configure › Leave Types**: check that a type exists (e.g. "CAN - Vacation") or add `QA_AV Vacation`
 - [ ] **Leave › Entitlements › Add Entitlements**: Ellie, QA_AV Vacation, current period, **5 days**

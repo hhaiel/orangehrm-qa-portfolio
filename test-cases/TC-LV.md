@@ -1,0 +1,85 @@
+# Test Cases: Leave (LV)
+
+**Source stories:** [`user-stories/US-LV.md`](../user-stories/US-LV.md) (US-LV-0001 to 0004, reviewed 2026-11-25)
+**Browser:** Chromium
+**Version:** OrangeHRM OS 5.9 (local Docker, http://localhost:8080)
+
+**Test data** (see [`docs/test-data.md`](../docs/test-data.md)):
+- Admin `qa_admin`. Supervisor **QA_AV Sam Supervisor** (`qa_av_super`). Employee **QA_AV Ellie Employee** (`qa_av_emp`, reports to Sam). **QA_AV Olivia Other** (`qa_av_other`, does *not* report to Sam). **QA_AV Nina New** (no entitlement).
+- Leave types **QA_AV Vacation**, **QA_AV Sick**. Holiday **QA_AV Holiday** on Wed 2026-12-02. Work Week Sat/Sun off. Leave period 2026.
+- **Reset before running:** cancel Ellie's existing requests (or reinstall) so she has **5.00 days available and no requests**, unless a case says otherwise. Dates are in Dec 2026; move them if you run after that.
+
+## AC gaps found
+- **US-LV-0001 AC3:** whether an entitlement of **0** is allowed isn't defined. It passes validation today (DEF-002, needs confirmation). Not covered by a test case until the rule is decided.
+- **US-LV-0001 AC3:** updated so negative numbers must show a "must be positive" message. The app currently fails this (DEF-001).
+- **US-LV-0002 AC6:** how partial days are totalled isn't stated beyond "the total reflects it". TC-003 assumes a half day counts as 0.50.
+- **US-LV-0002 AC9:** no limit on how far back leave can be applied (previous period? any date?). Only "yesterday" is tested.
+- **US-LV-0003 AC2:** no rule for whether Ellie's balance changes when a Pending request becomes Scheduled. Not asserted.
+- **US-LV-0003:** the open questions (supervisor approving their own leave, approving a cancelled request) have no AC yet, so they're not covered.
+- **US-LV-0002:** Comments rules (optional? max length?) aren't defined, so they're not covered.
+
+## Test cases
+
+| Test Case ID | Feature Name | Test Case/Scenario | Pre-requisite | Test Steps | Test Data | Expected Results | Browsers | Status | Actual Results |
+|---|---|---|---|---|---|---|---|---|---|
+| US-LV-0001-TC-001 | Leave – Add Entitlement | Verify the Add Entitlement form shows all fields and enforces required fields (AC1, AC2) | Admin `qa_admin` is logged in | 1. Go to Leave › Entitlements › Add Entitlements<br>2. Look at the form fields<br>3. Click Save without entering anything | – | 1. Add Leave Entitlement page opens<br>2. Add to (Individual Employee / Multiple Employees), Employee Name, Leave Type, Leave Period and Entitlement are shown. Leave Period defaults to 2026-01-01 - 2026-12-31<br>3. "Required" appears under Employee Name, Leave Type and Entitlement. Nothing is saved | Chromium | | |
+| US-LV-0001-TC-002 | Leave – Add Entitlement | Verify Entitlement accepts only positive numbers below 10000 with up to 2 decimals (AC3) | Admin is logged in. Continued from TC-001 (Add Entitlement page open) | 1. Select Employee Name "QA_AV Nina New" and Leave Type "QA_AV Vacation"<br>2. Enter each Entitlement value from Test Data, one at a time, and click outside the field after each<br>3. Note the message shown for each value | Invalid: `abc`, `2.555`, ` 5 ` (spaces), `-1`, `10000`<br>Valid: `2.5`, `9999.99` | 2. `abc`, `2.555`, ` 5 ` → "Should be a number with upto 2 decimal places"<br>`-1` → message saying the value must be positive (**DEF-001**)<br>`10000` → "Should be less than 10000"<br>`2.5`, `9999.99` → no error | Chromium | | |
+| US-LV-0001-TC-003 | Leave – Add Entitlement | Verify saving an entitlement asks for confirmation, adds to any existing value, and Cancel discards it (AC4, AC5, AC6) | Admin is logged in. QA_AV Nina New has **no** QA_AV Vacation entitlement | 1. Go to Leave › Entitlements › Add Entitlements<br>2. Select Employee "QA_AV Nina New", Leave Type "QA_AV Vacation", Entitlement `5`<br>3. Click Save<br>4. Click Confirm<br>5. Click Add, enter the same employee and leave type, Entitlement `3`, then click Save<br>6. Click Cancel in the dialog<br>7. Open Leave › Entitlements › Employee Entitlements for Nina, QA_AV Vacation, 2026 period<br>8. Repeat step 5, then click Confirm | Employee: QA_AV Nina New<br>Leave Type: QA_AV Vacation<br>Values: 5, then 3 | 3. Dialog "Updating Entitlement": "Existing Entitlement value 0.00 will be updated to 5.00"<br>4. "Successfully Saved". Leave Entitlements list opens with Total 5.00 Day(s)<br>5. Dialog says "5.00 will be updated to 8.00"<br>6. Dialog closes, nothing saved<br>7. Total still 5.00 Day(s)<br>8. "Successfully Saved". Total 8.00 Day(s) | Chromium | | |
+| US-LV-0002-TC-001 | Leave – Apply | Verify an employee can submit a full-day leave request and the balance updates (AC1, AC2, AC3, AC8) | `qa_av_emp` (Ellie) is logged in. Ellie has 5.00 days of QA_AV Vacation and no requests | 1. Go to Leave › Apply<br>2. Click Apply without entering anything<br>3. Select Leave Type "QA_AV Vacation"<br>4. Click the (?) icon next to Leave Balance, then click Ok<br>5. Enter From Date `2026-12-07`<br>6. Click Apply<br>7. Go to Leave › My Leave<br>8. Go to Leave › Apply and select "QA_AV Vacation" | Leave Type: QA_AV Vacation<br>Date: Mon 2026-12-07 | 2. "Required" under Leave Type, From Date and To Date<br>3. Leave Balance shows "5.00 Day(s)"<br>4. Leave Balance Details shows Total Entitlement 5.00, Balance 5.00, Taken/Scheduled/Pending Approval 0.00<br>5. To Date fills in as 2026-12-07; Duration shows Full Day<br>6. "Successfully Saved"<br>7. Row for 2026-12-07, 1.00 day, status "Pending Approval (1.00)"<br>8. Leave Balance shows "4.00 Day(s)" | Chromium | | |
+| US-LV-0002-TC-002 | Leave – Apply | Verify half-day options and that a half day counts as 0.50 (AC4) | Ellie is logged in with at least 1.00 day available | 1. Go to Leave › Apply<br>2. Select Leave Type "QA_AV Vacation"<br>3. Enter From Date `2026-12-08`<br>4. Open the Duration dropdown<br>5. Select "Half Day - Morning"<br>6. Click Apply<br>7. Go to Leave › My Leave | Date: Tue 2026-12-08<br>Duration: Half Day - Morning | 4. Options: Full Day, Half Day - Morning, Half Day - Afternoon, Specify Time<br>6. "Successfully Saved"<br>7. Row "2026-12-08 (09:00 - 13:00) Half Day", 0.50 day, "Pending Approval (0.50)" | Chromium | | |
+| US-LV-0002-TC-003 | Leave – Apply | Verify weekends and holidays aren't counted, and partial days change the total (AC5, AC6) | Ellie is logged in with at least 4.50 days available. QA_AV Holiday exists on 2026-12-02 | 1. Go to Leave › Apply<br>2. Select "QA_AV Vacation", From Date `2026-11-27`, To Date `2026-12-02`<br>3. Click Apply<br>4. Go to Leave › Apply again<br>5. Select "QA_AV Vacation", From Date `2026-12-10`, To Date `2026-12-11`<br>6. Open the Partial Days dropdown<br>7. Select "Start Day Only", then Duration "Half Day - Morning"<br>8. Click Apply<br>9. Go to Leave › My Leave | Range 1: Fri 2026-11-27 → Wed 2026-12-02 (weekend + holiday inside)<br>Range 2: Thu 2026-12-10 → Fri 2026-12-11, half day on start day | 3. "Successfully Saved"<br>5. Partial Days field appears<br>6. Options: All Days, Start Day Only, End Day Only, Start and End Day<br>8. "Successfully Saved"<br>9. Range 1 shows **3.00** days (Fri, Mon, Tue; Sat/Sun and the holiday excluded). Range 2 shows **1.50** days | Chromium | | |
+| US-LV-0002-TC-004 | Leave – Apply | Verify To Date can't be before From Date, and past dates are allowed (AC7, AC9) | Ellie is logged in with at least 1.00 day available | 1. Go to Leave › Apply<br>2. Select "QA_AV Vacation"<br>3. Enter From Date `2026-12-10` and To Date `2026-12-08`<br>4. Change From Date and To Date to yesterday's date<br>5. Click Apply<br>6. Go to Leave › My Leave | Invalid range: 2026-12-10 → 2026-12-08<br>Past date: yesterday (e.g. 2026-11-24) | 3. "To date should be after from date" under To Date<br>5. "Successfully Saved"<br>6. Row for yesterday's date with status "Pending Approval (1.00)" | Chromium | | |
+| US-LV-0003-TC-001 | Leave – Leave List | Verify a supervisor sees only subordinates' requests and the filters work (AC1, AC7) | `qa_av_super` (Sam) is logged in. Ellie has a Pending request on 2026-12-07. Olivia (not Sam's report) has a Pending request on 2026-12-07 | 1. Go to Leave › Leave List<br>2. Look at the listed requests<br>3. Set Leave Status to "Rejected" only and click Search<br>4. Click Reset | – | 1. Leave List page opens<br>2. Ellie's 2026-12-07 request is listed; Olivia's isn't<br>3. Ellie's pending request is no longer listed<br>4. Filters return to their defaults and Ellie's request is listed again | Chromium | | |
+| US-LV-0003-TC-002 | Leave – Leave List | Verify a supervisor can approve a subordinate's pending request (AC2) | Sam is logged in. Continued from TC-001 (Leave List open, Ellie's 2026-12-07 request Pending) | 1. On Ellie's 2026-12-07 row, click Approve<br>2. Log in as Ellie and go to Leave › My Leave | – | 1. A success message appears; the row leaves the Pending list<br>2. Ellie's 2026-12-07 request shows status "Scheduled (1.00)" | Chromium | | |
+| US-LV-0003-TC-003 | Leave – Leave List | Verify a supervisor can reject a pending request and the days return to the balance (AC3) | Sam is logged in. Ellie has a Pending request on 2026-12-08 (1.00 day). Note Ellie's current balance | 1. Go to Leave › Leave List<br>2. On Ellie's 2026-12-08 row, click Reject<br>3. Log in as Ellie and go to Leave › My Leave<br>4. Go to Leave › Apply and select "QA_AV Vacation" | Request: Ellie, 2026-12-08, 1.00 day | 2. A success message appears<br>3. The 2026-12-08 request shows status "Rejected"<br>4. Leave Balance is 1.00 day higher than before the rejection | Chromium | | |
+| US-LV-0003-TC-004 | Leave – My Leave | Verify an employee can cancel their own Pending and Scheduled requests and get the days back (AC4) | Ellie is logged in. She has a Pending request on 2026-12-10 and the Scheduled 2026-12-07 request (from TC-002). Note her balance | 1. Go to Leave › My Leave<br>2. On the 2026-12-10 Pending row, click Cancel<br>3. On the 2026-12-07 Scheduled row, click Cancel<br>4. Go to Leave › Apply and select "QA_AV Vacation" | Pending: 2026-12-10<br>Scheduled: 2026-12-07 | 2. A success message; status becomes "Cancelled"<br>3. A success message; status becomes "Cancelled"<br>4. Leave Balance is 2.00 days higher than before | Chromium | | |
+| US-LV-0003-TC-005 | Leave – Leave List | Verify Admin can approve a request from an employee who isn't their subordinate (AC5) | Admin is logged in. Olivia has a Pending request on 2026-12-07 | 1. Go to Leave › Leave List<br>2. Find Olivia's 2026-12-07 request<br>3. Click Approve | Request: Olivia, 2026-12-07 | 2. Olivia's request is listed<br>3. A success message appears; the request status becomes "Scheduled" | Chromium | | |
+| US-LV-0003-TC-006 | Leave – Access | Verify an employee without subordinates can't reach the Leave List (AC6) | Ellie (no subordinates) is logged in | 1. Click Leave in the main menu<br>2. Look at the Leave top menu<br>3. Open `http://localhost:8080/web/index.php/leave/viewLeaveList` directly | URL: /web/index.php/leave/viewLeaveList | 2. Only Apply, My Leave, Entitlements, Reports are shown (no Leave List, no Assign Leave)<br>3. Page shows "Credential Required" (HTTP 403); no other employees' requests are visible | Chromium | | |
+| US-LV-0004-TC-001 | Leave – Validation | Verify a request larger than the balance is blocked (AC1) | Ellie is logged in with exactly 5.00 days available and no requests | 1. Go to Leave › Apply<br>2. Select "QA_AV Vacation"<br>3. Enter From Date `2026-12-07` and To Date `2026-12-14`<br>4. Click Apply<br>5. Go to Leave › My Leave | Range: Mon 2026-12-07 → Mon 2026-12-14 (6 working days) | 3. "Balance not sufficient" shown in red in place of the balance<br>4. Error toast "Leave Balance Exceeded"<br>5. No request for this range exists | Chromium | | |
+| US-LV-0004-TC-002 | Leave – Validation | Verify overlapping requests are blocked, but Cancelled and Rejected requests don't count as overlaps (AC2, AC5) | Ellie is logged in. She has a Pending request on 2026-12-14 and a Rejected request on 2026-12-15 | 1. Go to Leave › Apply<br>2. Select "QA_AV Vacation", From Date `2026-12-14`<br>3. Click Apply<br>4. Go to Leave › My Leave and Cancel the 2026-12-14 request<br>5. Go to Leave › Apply, select "QA_AV Vacation", From Date `2026-12-14`, click Apply<br>6. Go to Leave › Apply, select "QA_AV Vacation", From Date `2026-12-15`, click Apply | Overlap date: 2026-12-14<br>Rejected date: 2026-12-15 | 3. Warning toast "Failed to Submit". "Overlapping Leave Request(s) Found" table lists 2026-12-14, 8.00 hours, QA_AV Vacation, Pending Approval<br>5. "Successfully Saved"<br>6. "Successfully Saved" | Chromium | | |
+| US-LV-0004-TC-003 | Leave – Validation | Verify leave types without entitlement aren't offered, and ranges with no working days are blocked (AC3, AC4) | Ellie is logged in. She has no QA_AV Sick entitlement. QA_AV Holiday exists on 2026-12-02 | 1. Go to Leave › Apply<br>2. Open the Leave Type dropdown<br>3. Select "QA_AV Vacation", From Date `2026-12-12`, To Date `2026-12-13`, then click Apply<br>4. Change From Date and To Date to `2026-12-02`, then click Apply | Weekend: Sat 2026-12-12 → Sun 2026-12-13<br>Holiday: Wed 2026-12-02 | 2. Only "QA_AV Vacation" is listed; "QA_AV Sick" isn't<br>3. Error toast "Failed to Submit: No Working Days Selected"<br>4. Same error toast; nothing saved | Chromium | | |
+| US-LV-0004-TC-004 | Leave – Validation | Verify a morning and an afternoon half day on the same date are both allowed (AC6) | Ellie is logged in with at least 1.00 day available and no request on 2026-12-16 | 1. Go to Leave › Apply<br>2. Select "QA_AV Vacation", From Date `2026-12-16`, Duration "Half Day - Morning", click Apply<br>3. Go to Leave › Apply<br>4. Select "QA_AV Vacation", From Date `2026-12-16`, Duration "Half Day - Afternoon", click Apply<br>5. Go to Leave › My Leave | Date: Wed 2026-12-16 | 2. "Successfully Saved"<br>4. "Successfully Saved" (no overlap warning)<br>5. Two rows: "2026-12-16 (09:00 - 13:00) Half Day" and "2026-12-16 (13:00 - 17:00) Half Day", 0.50 day each | Chromium | | |
+
+## Coverage
+**17 test cases.** Every AC in US-LV-0001 to 0004 is covered:
+
+| Story | AC → Test case |
+|---|---|
+| US-LV-0001 | AC1, AC2 → TC-001 · AC3 → TC-002 · AC4, AC5, AC6 → TC-003 (employee-side balance from AC6 is also checked in US-LV-0002-TC-001) |
+| US-LV-0002 | AC1, AC2, AC3, AC8 → TC-001 · AC4 → TC-002 · AC5, AC6 → TC-003 · AC7, AC9 → TC-004 |
+| US-LV-0003 | AC1, AC7 → TC-001 · AC2 → TC-002 · AC3 → TC-003 · AC4 → TC-004 · AC5 → TC-005 · AC6 → TC-006 |
+| US-LV-0004 | AC1 → TC-001 · AC2, AC5 → TC-002 · AC3, AC4 → TC-003 · AC6 → TC-004 |
+
+Not covered (see AC gaps): a 0-day entitlement, the limit on past dates, Comments rules, and the US-LV-0003 open questions.
+
+## Automation candidates
+| Test Case ID | Auto / Manual-only | Reason | Tag | Automated in (spec file) |
+|---|---|---|---|---|
+| US-LV-0001-TC-001 | Auto | Simple form validation | @regression | |
+| US-LV-0001-TC-002 | Auto | Data-driven: one test, many values | @regression | |
+| US-LV-0001-TC-003 | Auto | Core setup flow; also reused as API setup | @smoke | |
+| US-LV-0002-TC-001 | Auto | Main happy path + balance | @smoke | |
+| US-LV-0002-TC-002 | Auto | Half-day rule | @regression | |
+| US-LV-0002-TC-003 | Auto | Day-count calculation, high risk | @regression | |
+| US-LV-0002-TC-004 | Auto | Date rules (pass "yesterday" dynamically) | @regression | |
+| US-LV-0003-TC-001 | Auto | Multi-role visibility | @regression | |
+| US-LV-0003-TC-002 | Auto | Core approval flow | @smoke | |
+| US-LV-0003-TC-003 | Auto | Reject + balance restore | @regression | |
+| US-LV-0003-TC-004 | Auto | Cancel + balance restore | @regression | |
+| US-LV-0003-TC-005 | Auto | Admin override | @regression | |
+| US-LV-0003-TC-006 | Auto | Access control (also an API 403 check) | @smoke | |
+| US-LV-0004-TC-001 | Auto | Key business rule | @smoke | |
+| US-LV-0004-TC-002 | Auto | Overlap rules | @regression | |
+| US-LV-0004-TC-003 | Auto | Validation | @regression | |
+| US-LV-0004-TC-004 | Auto | Half-day overlap rule | @regression | |
+
+All 17 can be automated. To keep the suite small, automate the **@smoke** ones first (5 cases), then the rest as time allows. Manual runs are still done once for the portfolio.
+
+## Execution log
+| Date | Environment / version | Executed | Pass | Fail | Blocked | Notes |
+|---|---|---|---|---|---|---|
+| | Local Docker, OrangeHRM OS 5.9 | | | | | |
+
+---
+**Status values:** Pass · Fail · Blocked · Not Run
+**Known failure:** US-LV-0001-TC-002 is expected to **Fail** on the `-1` value (DEF-001).

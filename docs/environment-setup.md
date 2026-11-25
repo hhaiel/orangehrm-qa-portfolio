@@ -1,4 +1,4 @@
-# Environment setup
+﻿# Environment setup
 
 You have two options. **Start with the public demo.** Switch to Docker only if the shared data gets in your way.
 
@@ -16,48 +16,46 @@ You have two options. **Start with the public demo.** Switch to Docker only if t
 2. Run the setup checklist in [test-data.md](test-data.md)
 3. Note the date/time in your execution log (resets can explain "missing data")
 
-## Option B: Local install with Docker (stable, private)
+## Option B: Local install with Docker (stable, private) ✅ in use
 
-**Needs:** Docker Desktop for Windows (with WSL 2). About 15 min.
+**Needs:** Docker Desktop for Windows (with WSL 2). About 15 min the first time.
+The setup lives in this repo: [`docker/docker-compose.yml`](../docker/docker-compose.yml) runs OrangeHRM **5.9** (pinned, same as the demo) + MariaDB 10.11.
 
-1. Create a folder outside this repo, e.g. `C:\Users\<you>\orangehrm-local`, and save this as `docker-compose.yml`:
-
-```yaml
-services:
-  db:
-    image: mariadb:10.11
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: orangehrm
-      MYSQL_USER: orangehrm
-      MYSQL_PASSWORD: orangehrm
-    volumes:
-      - db_data:/var/lib/mysql
-
-  orangehrm:
-    image: orangehrm/orangehrm:latest
-    ports:
-      - "8080:80"
-    depends_on:
-      - db
-
-volumes:
-  db_data:
-```
-
-2. Start it:
+### First-time setup
+1. Create your local secrets file (git-ignored):
    ```powershell
-   docker compose up -d
+   copy docker\.env.example docker\.env
    ```
-3. Open http://localhost:8080 and follow the **installation wizard**:
-   - Database host: `db` · Database name: `orangehrm` · User/password: `orangehrm` / `orangehrm`
-   - Create your own Admin account (local only)
-4. Stop with `docker compose down`. Your data stays in the `db_data` volume. To wipe and start fresh: `docker compose down -v`.
+   Replace every `change-me` value with your own test passwords. Never reuse a real password.
+2. Start Docker Desktop, then from the repo root:
+   ```powershell
+   docker compose -f docker/docker-compose.yml --env-file docker/.env -p orangehrm up -d
+   ```
+3. Open http://localhost:8080 and complete the **installation wizard**:
 
-> Check the image name, tags and any required environment variables against the official `orangehrm/orangehrm` page on Docker Hub. The setup may change between releases.
+   | Step | What to enter |
+   |---|---|
+   | Welcome | Fresh Installation |
+   | License | Accept (GPL v3) |
+   | Database | **Existing Empty Database** · Host `db` · Port `3306` · Name, user, password from `docker/.env` (`DB_NAME`, `DB_USER`, `DB_PASSWORD`) |
+   | Instance | Organization `QA Portfolio` · Country · Language English (US) · your timezone |
+   | Admin user | Name `QA Admin` · email `qa_admin@example.com` · username/password = `ADMIN_USERNAME` / `ADMIN_PASSWORD` · **untick** "Register your system" |
+   | Install | Takes 1–3 min. **Keep the browser tab visible.** In a background tab it can stall at "99%" because the browser throttles it. |
 
-**Local-only tip:** a fresh install has **no sample employees**, so you'll create all data yourself (good practice, but more setup). The test-data checklist covers what you need.
+4. Log in at http://localhost:8080 with the admin account.
 
+### Daily use
+| Task | Command (from repo root) |
+|---|---|
+| Start | `docker compose -f docker/docker-compose.yml --env-file docker/.env -p orangehrm up -d` |
+| Stop (keeps data) | `docker compose -p orangehrm stop` |
+| Status | `docker compose -p orangehrm ps` |
+| Logs | `docker logs --tail 50 orangehrm-orangehrm-1` |
+| **Wipe everything** and reinstall | `docker compose -p orangehrm down -v`, then repeat First-time setup |
+
+Data persists in two Docker volumes: `orangehrm_db_data` (database) and `orangehrm_app_conf` (OrangeHRM's `Conf.php`, so the installer doesn't come back after a restart).
+
+**Local-only tip:** a fresh install has **no sample employees**, so you create all data yourself (see [test-data.md](test-data.md)).
 ## Browser and tools
 | Tool | Use |
 |---|---|

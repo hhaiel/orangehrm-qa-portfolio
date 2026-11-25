@@ -26,17 +26,17 @@
 
 | Metric | Value |
 |---|---|
-| User stories | 4 (Leave) · [PIM, Admin to come] |
+| User stories | 9 (Leave 4, PIM 3, Admin 2) |
 | Manual test cases written | 17 (Leave) |
 | Executed / Passed / Failed / Blocked | 17 / 16 / 1 / 0 |
-| Defects logged | 2 (0 High, 0 Medium, 2 Low; 1 needs confirmation) + 6 observations |
+| Defects logged | 6 (0 High, 2 Medium, 4 Low; 1 needs confirmation) + 8 observations |
 | Automated tests (UI / API) | [n] / [n] |
 | Manual cases automated | [n] of [n] ([%]) |
 
 **Top findings:**
-1. DEF-001: negative leave entitlement shows a misleading "decimal places" error
-2. DEF-002: a 0-day entitlement passes validation (needs confirmation)
-3. Observation: cancelling leave happens in one click, with no confirmation
+1. DEF-004 (Medium): Date of Birth accepts a future date
+2. DEF-003 (Medium): untrimmed spaces in employee names are saved and break list sorting
+3. DEF-001 (Low): negative leave entitlement shows a misleading "decimal places" error
 <!-- Update as PIM/Admin testing adds findings. -->
 
 ## Repo structure

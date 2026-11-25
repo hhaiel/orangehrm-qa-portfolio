@@ -16,7 +16,9 @@ The public demo is **shared by everyone** and **resets periodically**. Other tes
 | Admin (demo) | (shown on the demo login page) | (existing) | Built-in demo admin |
 | Supervisor (ESS) | `qa_av_super` | QA_AV Sam Supervisor | Set as Report-to for the employee below |
 | Employee (ESS) | `qa_av_emp` | QA_AV Ellie Employee | Main ESS test user |
-| Disabled user | `qa_av_disabled` | QA_AV Dan Disabled | Status = Disabled, for login tests |
+| Disabled user | `qa_av_disabled` | QA_AV Dan Disabled (#0007) | Status = Disabled, for login tests (created 2026-11-25) |
+| Non-subordinate | `qa_av_other` | QA_AV Olivia Other (#0005) | Doesn't report to Sam; 5 days QA_AV Vacation |
+| No login | – | QA_AV Nina New (#0004) | Used for entitlement and Add User tests |
 
 **Passwords:** use one test password for all QA users and keep it **only in `docker/.env`** (`TEST_USER_PASSWORD`, git-ignored), never in a committed file. A public repo with passwords looks bad even when they're test-only.
 

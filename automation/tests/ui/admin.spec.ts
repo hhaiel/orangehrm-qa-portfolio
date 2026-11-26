@@ -79,11 +79,19 @@ test.describe('Admin › Users', () => {
     await users.filters.select('User Role', 'ESS');
     await users.filters.select('Status', 'Enabled');
     await users.search();
-    await expect(users.row(username)).toBeVisible(); // filtered results have loaded
-    const listed = await users.usernames();
-    expect(listed).toContain(username);
-    expect(listed).not.toContain(env('ADMIN_USERNAME'));
-    expect(listed).not.toContain(env('DISABLED_USERNAME'));
+    // The unfiltered list (which already contains the new user) is still shown for a moment after
+    // Search, and the list is empty while it reloads. So wait until the FILTERED result is shown.
+    // (Found in CI: checking only "new user's row is visible" passed against the old list.)
+    await expect
+      .poll(async () => {
+        const listed = await users.usernames();
+        return listed.includes(username) && !listed.includes(env('ADMIN_USERNAME')) && !listed.includes(env('DISABLED_USERNAME'));
+      }, { message: 'filtered list: new user shown, Admin and disabled user hidden' })
+      .toBe(true);
+    for (const row of await users.results.all()) {
+      await expect(row).toContainText('ESS');
+      await expect(row).toContainText('Enabled');
+    }
   });
 
   test('US-AD-0001-TC-003 Admin changes a user\'s role and the user then gets Admin menus @regression', async ({

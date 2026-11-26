@@ -23,6 +23,8 @@ type Fixtures = {
   createPerson: (role: string, options?: PersonOptions) => Promise<TestPerson>;
   /** Opens a separate browser session logged in as the given person (UI login). */
   loginAs: (person: TestPerson) => Promise<LoggedInUser>;
+  /** Creates a full-day holiday for this test and deletes it afterwards. */
+  createHoliday: (date: string) => Promise<void>;
 };
 
 const LEAVE_TYPE = 'QA_AV Vacation';
@@ -68,12 +70,23 @@ export const test = base.extend<Fixtures>({
     await adminApi.deleteEmployees(created);
   },
 
+  createHoliday: async ({ adminApi }, use) => {
+    const created: number[] = [];
+    await use(async (date) => {
+      created.push(await adminApi.createHoliday(`QA_PW Holiday ${uniqueSuffix()}`, date));
+    });
+    // Holidays are global, so always remove them, even if the test failed.
+    await adminApi.deleteHolidays(created);
+  },
+
   loginAs: async ({ browser, baseURL }, use) => {
     const contexts: BrowserContext[] = [];
 
     await use(async (person) => {
       if (!person.username || !person.password) throw new Error(`${person.fullName} has no login (use withLogin: true).`);
-      const context = await (browser as Browser).newContext({ baseURL });
+      // Start logged out: Playwright otherwise copies the test's storageState (e.g. Admin)
+      // into new contexts, and the login page would redirect straight to the Dashboard.
+      const context = await (browser as Browser).newContext({ baseURL, storageState: { cookies: [], origins: [] } });
       contexts.push(context);
       const page = await context.newPage();
       const login = new LoginPage(page);

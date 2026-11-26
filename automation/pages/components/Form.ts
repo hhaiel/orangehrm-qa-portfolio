@@ -25,9 +25,36 @@ export class Form {
 
   /** Opens a custom dropdown and picks an option by its exact text. */
   async select(label: string, option: string) {
-    await this.field(label).locator('.oxd-select-text').click();
-    await this.page.getByRole('option', { name: option, exact: true }).click();
+    const optionLocator = this.page.getByRole('option', { name: option, exact: true });
+    // Only open the list if it isn't open already (clicking an open list closes it).
+    if (!(await optionLocator.isVisible())) await this.field(label).locator('.oxd-select-text').click();
+    await optionLocator.click();
     await expect(this.field(label).locator('.oxd-select-text-input')).toHaveText(option);
+  }
+
+  /** Opens a dropdown and returns the option texts (without the "-- Select --" placeholder). */
+  async options(label: string): Promise<string[]> {
+    await this.field(label).locator('.oxd-select-text').click();
+    const options = this.page.getByRole('option');
+    await expect(options.first()).toBeVisible();
+    const texts = (await options.allInnerTexts()).map((t) => t.trim()).filter((t) => t !== '-- Select --');
+    // Escape doesn't close OrangeHRM dropdowns; clicking the field again does.
+    await this.field(label).locator('.oxd-select-text').click();
+    await expect(options).toHaveCount(0);
+    return texts;
+  }
+
+  /** For multi-select fields shown as chips: remove all chips, then pick the given options. */
+  async multiSelect(label: string, options: string[]) {
+    const chips = this.field(label).locator('.oxd-chip');
+    while ((await chips.count()) > 0) {
+      await chips.first().locator('i').click();
+    }
+    for (const option of options) {
+      await this.field(label).locator('.oxd-select-text').click();
+      await this.page.getByRole('option', { name: option, exact: true }).click();
+    }
+    await expect(chips).toHaveText(options);
   }
 
   /** Types into an autocomplete and picks the matching suggestion (not just the typed text). */

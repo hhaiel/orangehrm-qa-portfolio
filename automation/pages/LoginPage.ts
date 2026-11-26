@@ -22,7 +22,8 @@ export class LoginPage {
 
   async goto() {
     await this.page.goto('/web/index.php/auth/login');
-    await expect(this.loginButton).toBeVisible();
+    // After the server has been idle (e.g. overnight) the first render can take 10+ s.
+    await expect(this.loginButton).toBeVisible({ timeout: 30_000 });
   }
 
   async login(username: string, password: string) {

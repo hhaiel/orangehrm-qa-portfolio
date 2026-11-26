@@ -17,6 +17,18 @@ export class AddEntitlementPage {
     await expect(this.page.getByText('Add Leave Entitlement', { exact: true })).toBeVisible();
   }
 
+  /** The field labels shown on the form, in order. */
+  async fieldLabels(): Promise<string[]> {
+    return (await this.page.locator('form label').allInnerTexts()).map((t) => t.trim()).filter(Boolean);
+  }
+
+  /** Types a value into Entitlement and leaves the field, so validation runs. */
+  async typeEntitlement(value: string) {
+    const input = this.form.input('Entitlement');
+    await input.fill(value);
+    await input.blur();
+  }
+
   async fill(employeeFullName: string, leaveType: string, days: number) {
     await this.form.autocomplete('Employee Name', employeeFullName, employeeFullName);
     await this.form.select('Leave Type', leaveType);

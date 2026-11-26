@@ -113,6 +113,35 @@ export class OrangeHrmApi {
     return this.ok(await this.request.post(`${API}/leave/leave-requests`, { data: body }), 'Apply leave');
   }
 
+  /** Admin or supervisor context: approve or reject someone's request. */
+  async actOnRequest(requestId: number, action: 'APPROVE' | 'REJECT') {
+    await this.ok(
+      await this.request.put(`${API}/leave/employees/leave-requests/${requestId}`, { data: { action } }),
+      `${action} leave request`,
+    );
+  }
+
+  /** Must be called with the EMPLOYEE's request context: cancel their own request. */
+  async cancelMyRequest(requestId: number) {
+    await this.ok(
+      await this.request.put(`${API}/leave/leave-requests/${requestId}`, { data: { action: 'CANCEL' } }),
+      'Cancel my leave request',
+    );
+  }
+
+  async createHoliday(name: string, date: string): Promise<number> {
+    const data = await this.ok(
+      await this.request.post(`${API}/leave/holidays`, { data: { name, date, recurring: false, length: 0 } }),
+      'Create holiday',
+    );
+    return data.id;
+  }
+
+  async deleteHolidays(ids: number[]) {
+    if (ids.length === 0) return;
+    await this.ok(await this.request.delete(`${API}/leave/holidays`, { data: { ids } }), 'Delete holidays');
+  }
+
   /** Must be called with the EMPLOYEE's request context. */
   async myLeaveRequests(): Promise<Array<{ id: number; dates: { fromDate: string; toDate: string } }>> {
     const period = await this.currentLeavePeriod();

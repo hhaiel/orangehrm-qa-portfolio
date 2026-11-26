@@ -30,7 +30,7 @@
 | Manual test cases written | 32 (Leave 17, PIM 9, Admin 6) |
 | Executed / Passed / Failed / Blocked | 32 / 26 / 6 / 0 (81% pass) |
 | Defects logged | 7 (0 High, 2 Medium, 5 Low; 1 needs confirmation) + 8 observations |
-| Automated tests (UI / API) | 10 / 0 (+2 auth setup), all passing (Login 5, Leave smoke 5). Phase 4 in progress |
+| Automated tests (UI / API) | 23 / 0 (+2 auth setup), all passing: Login 5, Leave 18 (all 17 Leave cases). Phase 4 in progress |
 | Manual cases automated | [n] of [n] ([%]) |
 
 **Top findings:**

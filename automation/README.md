@@ -33,15 +33,17 @@ automation/
 │   └── leave/               ← ApplyLeavePage, MyLeavePage, LeaveListPage, AddEntitlementPage
 ├── tests/
 │   ├── auth.setup.ts        ← logs in once per role, saves sessions to playwright/.auth/
-│   └── ui/                  ← login.spec.ts, leave.spec.ts
+│   └── ui/                  ← login.spec.ts, leave.spec.ts (@smoke), leave-regression.spec.ts
 ├── utils/                   ← env.ts (settings, session paths), dates.ts (working days in the leave period)
 └── .env.example             ← copy to .env (git-ignored)
 ```
 
 ## How test data works
-Leave tests don't rely on shared records. Each test creates **its own employees** through the API (`createPerson`), with a login, an entitlement or a supervisor as needed, named `QA_PW <role> <unique suffix>`. When the test ends, even if it failed, the fixture deletes them. Deleting an employee also removes their user and leave. Dates are calculated (`utils/dates.ts`): a working day about a week ahead, inside the current leave period and not a holiday, so tests stay valid whatever day they run.
+Leave tests don't rely on shared records. Each test creates **its own employees** (`createPerson`) and, where needed, **its own holidays** (`createHoliday`) through the API, with a login, an entitlement or a supervisor as needed, named `QA_PW <role> <unique suffix>`. When the test ends, even if it failed, the fixture deletes them. Deleting an employee also removes their user and leave. Dates are calculated (`utils/dates.ts`): a working day about a week ahead, inside the current leave period and not a holiday, so tests stay valid whatever day they run.
 
-Verified: after repeated runs, 0 `QA_PW` employees and 0 `qa_pw_` users are left.
+Verified: after repeated runs, 0 `QA_PW` employees, 0 `qa_pw_` users and 0 `QA_PW` holidays are left.
+
+**Known defects in tests:** a check that fails because of a logged product bug is marked `test.fail()` with the DEF ID (e.g. DEF-001). The suite stays green, and Playwright flags the test as soon as the bug is fixed.
 
 ## Conventions
 - **Test titles start with the manual test case ID** (e.g. `US-LV-0002-TC-001 …`) so results trace back to `../test-cases/`. Supporting checks with no manual case use `LOGIN-001` style IDs.
@@ -58,7 +60,13 @@ Verified: after repeated runs, 0 `QA_PW` employees and 0 `qa_pw_` users are left
 | First login after the server is idle takes 10+ s (cold caches) | Setup timeout 90 s; login redirect wait 20 s |
 | Multi-user Leave flows take 15–40 s (saves take 4–6 s) | Leave spec timeout 90 s |
 
-With these settings the full suite passed **12/12 in two consecutive runs** (~3.8 min), and the Leave smoke tests passed 3× in a row.
+With these settings the full suite passed **25/25 in two consecutive runs** (~2.5–2.9 min), and the Leave smoke tests passed 3× in a row.
+
+| Gotcha found while building | Fix |
+|---|---|
+| `browser.newContext()` inside a test inherits the test's `storageState`, so a "fresh" login started as Admin | `loginAs` passes an empty `storageState` |
+| Escape doesn't close OrangeHRM dropdowns; the next click closed it instead of opening it | Close by clicking the field again; `select()` only opens a closed list |
+| The required `*` isn't part of label text | Compare labels without `*` |
 
 ## Status
 | Spec | Tests | Automates |
@@ -66,3 +74,5 @@ With these settings the full suite passed **12/12 in two consecutive runs** (~3.
 | `tests/auth.setup.ts` | 2 | Session setup (Admin, ESS) |
 | `tests/ui/login.spec.ts` | 5 | US-AD-0001-TC-004 + LOGIN-001…004 |
 | `tests/ui/leave.spec.ts` | 5 | US-LV-0001-TC-003, US-LV-0002-TC-001, US-LV-0003-TC-002, US-LV-0003-TC-006, US-LV-0004-TC-001 (all `@smoke`) |
+| `tests/ui/leave-regression.spec.ts` | 13 | The other 12 Leave cases (`@regression`); US-LV-0001-TC-002 split in two, the `-1` part is `test.fail` (DEF-001) |
+| **Total** | **23 UI + 2 setup** | **All 17 Leave cases + 1 Admin case automated** |

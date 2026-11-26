@@ -55,23 +55,23 @@ Not covered (see AC gaps): a 0-day entitlement, the limit on past dates, Comment
 ## Automation candidates
 | Test Case ID | Auto / Manual-only | Reason | Tag | Automated in (spec file) |
 |---|---|---|---|---|
-| US-LV-0001-TC-001 | Auto | Simple form validation | @regression | |
-| US-LV-0001-TC-002 | Auto | Data-driven: one test, many values | @regression | |
+| US-LV-0001-TC-001 | Auto | Simple form validation | @regression | `automation/tests/ui/leave-regression.spec.ts` ✅ |
+| US-LV-0001-TC-002 | Auto | Data-driven: one test, many values | @regression | `automation/tests/ui/leave-regression.spec.ts` ✅ (`-1` part marked `test.fail`: DEF-001) |
 | US-LV-0001-TC-003 | Auto | Core setup flow; also reused as API setup | @smoke | `automation/tests/ui/leave.spec.ts` ✅ |
 | US-LV-0002-TC-001 | Auto | Main happy path + balance | @smoke | `automation/tests/ui/leave.spec.ts` ✅ |
-| US-LV-0002-TC-002 | Auto | Half-day rule | @regression | |
-| US-LV-0002-TC-003 | Auto | Day-count calculation, high risk | @regression | |
-| US-LV-0002-TC-004 | Auto | Date rules (pass "yesterday" dynamically) | @regression | |
-| US-LV-0003-TC-001 | Auto | Multi-role visibility | @regression | |
+| US-LV-0002-TC-002 | Auto | Half-day rule | @regression | `automation/tests/ui/leave-regression.spec.ts` ✅ |
+| US-LV-0002-TC-003 | Auto | Day-count calculation, high risk | @regression | `automation/tests/ui/leave-regression.spec.ts` ✅ |
+| US-LV-0002-TC-004 | Auto | Date rules (pass "yesterday" dynamically) | @regression | `automation/tests/ui/leave-regression.spec.ts` ✅ |
+| US-LV-0003-TC-001 | Auto | Multi-role visibility | @regression | `automation/tests/ui/leave-regression.spec.ts` ✅ |
 | US-LV-0003-TC-002 | Auto | Core approval flow | @smoke | `automation/tests/ui/leave.spec.ts` ✅ |
-| US-LV-0003-TC-003 | Auto | Reject + balance restore | @regression | |
-| US-LV-0003-TC-004 | Auto | Cancel + balance restore | @regression | |
-| US-LV-0003-TC-005 | Auto | Admin override | @regression | |
+| US-LV-0003-TC-003 | Auto | Reject + balance restore | @regression | `automation/tests/ui/leave-regression.spec.ts` ✅ |
+| US-LV-0003-TC-004 | Auto | Cancel + balance restore | @regression | `automation/tests/ui/leave-regression.spec.ts` ✅ |
+| US-LV-0003-TC-005 | Auto | Admin override | @regression | `automation/tests/ui/leave-regression.spec.ts` ✅ |
 | US-LV-0003-TC-006 | Auto | Access control (also an API 403 check) | @smoke | `automation/tests/ui/leave.spec.ts` ✅ |
 | US-LV-0004-TC-001 | Auto | Key business rule | @smoke | `automation/tests/ui/leave.spec.ts` ✅ |
-| US-LV-0004-TC-002 | Auto | Overlap rules | @regression | |
-| US-LV-0004-TC-003 | Auto | Validation | @regression | |
-| US-LV-0004-TC-004 | Auto | Half-day overlap rule | @regression | |
+| US-LV-0004-TC-002 | Auto | Overlap rules | @regression | `automation/tests/ui/leave-regression.spec.ts` ✅ |
+| US-LV-0004-TC-003 | Auto | Validation | @regression | `automation/tests/ui/leave-regression.spec.ts` ✅ |
+| US-LV-0004-TC-004 | Auto | Half-day overlap rule | @regression | `automation/tests/ui/leave-regression.spec.ts` ✅ |
 
 All 17 can be automated. To keep the suite small, automate the **@smoke** ones first (5 cases), then the rest as time allows. Manual runs are still done once for the portfolio.
 

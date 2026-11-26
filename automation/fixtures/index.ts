@@ -1,4 +1,4 @@
-import { test as base, request, type Browser, type BrowserContext, type Page } from '@playwright/test';
+import { expect, test as base, request, type APIRequestContext, type Browser, type BrowserContext, type Page } from '@playwright/test';
 import { OrangeHrmApi } from '../api/OrangeHrmApi';
 import { LoginPage } from '../pages/LoginPage';
 import { env, STORAGE_STATE } from '../utils/env';
@@ -28,6 +28,8 @@ type Fixtures = {
   loginAs: (person: TestPerson) => Promise<LoggedInUser>;
   /** Creates a full-day holiday for this test and deletes it afterwards. */
   createHoliday: (date: string) => Promise<void>;
+  /** Logs a person in over HTTP only (no browser) and returns an API client with their session. */
+  apiLoginAs: (person: TestPerson) => Promise<OrangeHrmApi & { raw: APIRequestContext }>;
 };
 
 const LEAVE_TYPE = 'QA_AV Vacation';
@@ -88,6 +90,28 @@ export const test = base.extend<Fixtures>({
     });
     // Holidays are global, so always remove them, even if the test failed.
     await adminApi.deleteHolidays(created);
+  },
+
+  apiLoginAs: async ({ baseURL }, use) => {
+    const contexts: APIRequestContext[] = [];
+    await use(async (person) => {
+      if (!person.username || !person.password) throw new Error(`${person.fullName} has no login (use withLogin: true).`);
+      // Empty session on purpose: otherwise the test's storageState (e.g. Admin) may be reused,
+      // and the login page would redirect to the Dashboard without a token.
+      const context = await request.newContext({ baseURL, storageState: { cookies: [], origins: [] } });
+      contexts.push(context);
+      // The login form carries a CSRF token in the page HTML; post it back with the credentials.
+      const html = await (await context.get('/web/index.php/auth/login')).text();
+      const token = html.match(/:token="&quot;([^&]+)&quot;"/)?.[1];
+      expect(token, 'CSRF token on the login page').toBeTruthy();
+      const response = await context.post('/web/index.php/auth/validate', {
+        form: { _token: token!, username: person.username, password: person.password },
+        maxRedirects: 0,
+      });
+      expect(response.headers()['location'] ?? '', 'login should redirect to the dashboard').toContain('dashboard');
+      return Object.assign(new OrangeHrmApi(context), { raw: context });
+    });
+    for (const context of contexts) await context.dispose();
   },
 
   loginAs: async ({ browser, baseURL }, use) => {

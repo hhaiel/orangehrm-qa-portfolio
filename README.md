@@ -29,14 +29,14 @@
 | User stories | 9 (Leave 4, PIM 3, Admin 2) |
 | Manual test cases written | 32 (Leave 17, PIM 9, Admin 6) |
 | Executed / Passed / Failed / Blocked | 32 / 27 / 5 / 0 (84% pass) |
-| Defects logged | 7: 5 open (2 Medium, 3 Low; 1 needs confirmation), 2 rejected after automation (DEF-006, DEF-007) + 9 observations |
-| Automated tests (UI / API) | 41 / 0 (+2 auth setup): Login 5, Leave 18, PIM 11, Admin 7. **All 32 manual cases automated**; 5 known-defect checks marked `test.fail` |
+| Defects logged | 8: 6 open (3 Medium, 3 Low; 1 needs confirmation), 2 rejected after automation (DEF-006, DEF-007) + 10 observations |
+| Automated tests (UI / API) | 41 UI + 9 API (+2 auth setup): Login 5, Leave 18, PIM 11, Admin 7; API 9. **All 32 manual cases automated**; 6 known-defect checks marked `test.fail` |
 | Manual cases automated | 32 of 32 (100%) |
 
 **Top findings:**
-1. DEF-004 (Medium): Date of Birth accepts a future date
-2. DEF-003 (Medium): untrimmed spaces in employee names are saved and break list sorting
-3. DEF-001 (Low): negative leave entitlement shows a misleading "decimal places" error
+1. DEF-008 (Medium): the API crashes (HTTP 500) on an entitlement of 10000+ instead of rejecting it
+2. DEF-004 (Medium): Date of Birth accepts a future date
+3. DEF-003 (Medium): untrimmed spaces in employee names are saved and break list sorting
 <!-- Update as PIM/Admin testing adds findings. -->
 
 ## Repo structure

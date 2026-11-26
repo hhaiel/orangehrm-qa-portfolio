@@ -95,10 +95,10 @@ automation/
 - [x] Tags: `@smoke` and `@regression` on every test
 - [x] Role-based tests: the same page as Admin vs. ESS; ESS hitting Admin URLs is blocked (US-AD-0002, US-LV-0003-TC-006)
 - [x] **API-driven setup:** create the employee + entitlement via `request` before leave tests, and clean up after (`fixtures/index.ts`, verified 0 leftovers)
-- [ ] 5–8 API tests on `/web/index.php/api/v2/...` (status codes, response fields, validation errors)
+- [x] 5–8 API tests on `/web/index.php/api/v2/...` (status codes, response fields, validation errors): 9 API tests, found DEF-008
 - [x] Unique test data per run (`QA_PW <role> <suffix>`) so tests can run in parallel and re-run
 - [x] No `waitForTimeout`. Rely on auto-waiting and web-first assertions (`expect(locator).toBeVisible()`)
-- [ ] Run 3× in a row with no flaky failures (`npx playwright test --repeat-each=3`). Full suite (43): 2 runs, 1 flaky toast check found and fixed; toast tests then 2× green
+- [x] Run 3× in a row with no flaky failures: full suite (52 tests: 41 UI + 9 API + 2 setup) passed 3 consecutive runs, ~4 min each, 0 leftover data
 
 **Done when:** ~25 tests (UI + API) green locally, stable on repeat runs.
 

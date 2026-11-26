@@ -31,12 +31,19 @@ export default defineConfig({
     // 1. Logs in once per role and saves the session, so tests don't repeat the login.
     { name: 'setup', testMatch: /.*\.setup\.ts/ },
 
-    // 2. Tests that start already logged in (pick the role per spec with test.use).
+    // 2. UI tests in Chromium (pick the role per spec with test.use).
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
       dependencies: ['setup'],
-      testIgnore: /.*\.setup\.ts/,
+      testIgnore: [/.*\.setup\.ts/, /tests[\\/]api[\\/]/],
+    },
+
+    // 3. REST API tests: no browser, they reuse the saved sessions via the `request` fixture.
+    {
+      name: 'api',
+      testMatch: /tests[\\/]api[\\/].*\.spec\.ts/,
+      dependencies: ['setup'],
     },
   ],
 });

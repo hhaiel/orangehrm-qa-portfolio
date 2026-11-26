@@ -16,6 +16,7 @@ OrangeHRM must be running at `BASE_URL` (default http://localhost:8080), with th
 |---|---|
 | `npm test` | All tests (headless) |
 | `npm run test:smoke` | Only tests tagged `@smoke` |
+| `npm run test:api` | Only the REST API tests (no browser, < 1 min) |
 | `npm run test:headed` | Watch the browser |
 | `npm run test:ui` | Playwright UI mode (step through, time-travel) |
 | `npm run report` | Open the last HTML report |
@@ -26,7 +27,7 @@ OrangeHRM must be running at `BASE_URL` (default http://localhost:8080), with th
 automation/
 ├── playwright.config.ts     ← baseURL from .env, 1 worker, trace/screenshot/video on failure
 ├── api/OrangeHrmApi.ts      ← REST API v2 client: create employees/users/entitlements, apply leave, cleanup
-├── fixtures/index.ts        ← custom fixtures: adminApi, createPerson (auto-cleanup), loginAs
+├── fixtures/index.ts        ← custom fixtures: adminApi, createPerson/trackEmployee/createHoliday (auto-cleanup), loginAs (browser), apiLoginAs (HTTP only)
 ├── pages/
 │   ├── LoginPage.ts
 │   ├── components/          ← Form (label-based fields, dropdowns, autocomplete, dates, toast), Navigation
@@ -35,6 +36,7 @@ automation/
 │   └── admin/               ← SystemUsersPage, SaveUserPage
 ├── tests/
 │   ├── auth.setup.ts        ← logs in once per role, saves sessions to playwright/.auth/
+│   ├── api/                 ← REST API tests (separate `api` project, no browser)
 │   └── ui/                  ← login, leave (@smoke), leave-regression, pim, admin specs
 ├── utils/                   ← env.ts (settings, session paths), dates.ts (working days in the leave period)
 └── .env.example             ← copy to .env (git-ignored)
@@ -62,7 +64,7 @@ Verified: after repeated runs, 0 `QA_PW` employees, 0 `qa_pw_` users and 0 `QA_P
 | First login after the server is idle takes 10+ s (cold caches) | Setup timeout 90 s; login redirect wait 20 s |
 | Multi-user Leave flows take 15–40 s (saves take 4–6 s) | Leave spec timeout 90 s |
 
-With these settings the full suite (43 tests) passed in two consecutive runs (~4 min each). One flaky toast check was found in run 1 and fixed (see below); all 16 toast-checking tests then passed twice.
+With these settings the full suite (52 tests: 41 UI + 9 API + 2 setup) passed **3 consecutive runs** (~4 min each), and the API project passed 5× in a row. A flaky toast check found earlier was fixed (see below).
 
 | Gotcha found while building | Fix |
 |---|---|
@@ -82,7 +84,12 @@ With these settings the full suite (43 tests) passed in two consecutive runs (~4
 | `tests/ui/leave-regression.spec.ts` | 13 | The other 12 Leave cases (`@regression`); US-LV-0001-TC-002 split in two, the `-1` part is `test.fail` (DEF-001) |
 | `tests/ui/pim.spec.ts` | 11 | All 9 PIM cases; TC-003 and TC-005 split into several tests; `test.fail`: DEF-003, DEF-004, DEF-005 |
 | `tests/ui/admin.spec.ts` | 7 | US-AD-0001-TC-001…003, US-AD-0002-TC-001/002; `test.fail`: DEF-005 (Add User form) |
-| **Total** | **41 UI + 2 setup** | **All 32 manual test cases automated** (5 known-defect checks marked `test.fail`) |
+| `tests/api/pim-admin.api.spec.ts` | 5 | API-001…005: list/pagination, validation (422 + field names), employee lifecycle, password policy, 401/403 access |
+| `tests/api/leave.api.spec.ts` | 4 | API-006/006b/007/008: entitlement validation (`test.fail`: DEF-008), leave rules (400 messages), approve/reject/cancel |
+| **Total** | **41 UI + 9 API + 2 setup** | **All 32 manual test cases automated**; 6 known-defect checks marked `test.fail` |
+
+### API tests
+The API project runs without a browser: Admin and Ellie use the saved sessions; other employees log in over HTTP (`apiLoginAs` reads the CSRF token from the login page and posts the form). Writing them found **DEF-008**: the server returns 500 for an entitlement of 10000 or more, which the UI hides with browser-side validation.
 
 ### What automation changed in the manual results
 - **DEF-006 rejected:** the Password message *does* update after leaving the field, about 1 s later (async check). The manual check read it too early. Now a passing regression test.

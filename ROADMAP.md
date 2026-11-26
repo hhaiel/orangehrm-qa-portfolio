@@ -103,12 +103,12 @@ automation/
 **Done when:** ~25 tests (UI + API) green locally, stable on repeat runs.
 
 ## Phase 5: CI pipeline (1–2 days)
-- [ ] `.github/workflows/playwright.yml`: on push/PR → start OrangeHRM in Docker → install → run tests → upload HTML report as an artifact
+- [x] `.github/workflows/playwright.yml`: on push/PR → start OrangeHRM in Docker → install → run tests → upload HTML report as an artifact (green: 53/53, ~4 min)
 - [ ] Publish the report to GitHub Pages (optional, impressive)
-- [ ] Add the CI status badge to `README.md`
-- [ ] Store credentials as GitHub **Secrets**, never in the workflow file
+- [x] Add the CI status badge to `README.md`
+- [x] Credentials never in the workflow file: random throwaway passwords are generated per run and masked (no secrets needed for an ephemeral database)
 
-> Known challenge: a fresh OrangeHRM container shows its install wizard. We'll solve it in this phase, e.g. a pre-seeded database dump plus config, or running `@smoke` against the public demo. We'll pick the option when we get here.
+> Solved: a fresh container shows the install wizard, so `docker/ci-install.sh` uses OrangeHRM's bundled YAML-driven CLI installer (`installer/cli_install.php`), and a Playwright `seed` project creates the shared test data.
 
 **Done when:** green badge on the README, report downloadable from Actions.
 

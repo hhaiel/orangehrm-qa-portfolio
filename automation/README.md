@@ -49,6 +49,17 @@ Verified: after repeated runs, 0 `QA_PW` employees, 0 `qa_pw_` users and 0 `QA_P
 
 **Known defects in tests:** a check that fails because of a logged product bug is marked `test.fail()` with the DEF ID (e.g. DEF-001). The suite stays green, and Playwright flags the test as soon as the bug is fixed.
 
+## Continuous integration
+GitHub Actions runs everything on every push (see `../.github/workflows/playwright.yml` and the main README). A fresh OrangeHRM is installed with `../docker/ci-install.sh`, then the projects run in order: **seed** (creates shared data, idempotent), **setup** (saves Admin/ESS sessions), then **chromium** (UI) and **api**. In CI, `retries` is 1 and the `github` reporter adds failure annotations.
+
+Run the same flow locally on a throwaway copy (port 8081, your normal install untouched):
+```bash
+sed 's/^APP_PORT=.*/APP_PORT=8081/' docker/.env > /tmp/ci.env
+ENV_FILE=/tmp/ci.env COMPOSE_PROJECT=orangehrm-ci bash docker/ci-install.sh
+cd automation && BASE_URL=http://localhost:8081 npx playwright test
+docker compose -p orangehrm-ci down -v   # remove it afterwards
+```
+
 ## Conventions
 - **Test titles start with the manual test case ID** (e.g. `US-LV-0002-TC-001 …`) so results trace back to `../test-cases/`. Supporting checks with no manual case use `LOGIN-001` style IDs.
 - **Tags:** `@smoke` for the critical subset. Everything else is regression.
@@ -74,6 +85,7 @@ With these settings the full suite (52 tests: 41 UI + 9 API + 2 setup) passed **
 | Two toasts can show at once ("Successfully Updated" + "No Records Found" when a list empties): strict-mode failure | `toast()` returns the toast container, which holds all toasts |
 | `getByText(/^…$/)` didn't match "(9) Records Found" (surrounding whitespace) | Unanchored regex |
 | Reading results right after Search returned an empty list | Wait for an expected row before reading |
+| CI only: the unfiltered list was still shown after Search, so "row visible" passed against stale results | Poll until the *filtered* result is shown (US-AD-0001-TC-002) |
 
 ## Status
 | Spec | Tests | Automates |

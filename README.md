@@ -1,6 +1,6 @@
 # OrangeHRM QA Automation Project (Playwright + TypeScript)
 
-<!-- CI badge goes here in Phase 5 -->
+[![Playwright tests](https://github.com/hhaiel/orangehrm-qa-portfolio/actions/workflows/playwright.yml/badge.svg)](https://github.com/hhaiel/orangehrm-qa-portfolio/actions/workflows/playwright.yml)
 
 > End-to-end QA of **OrangeHRM Open Source 5.x**, an open-source HR management system: manual test design plus a **Playwright** UI and API automation suite running in **GitHub Actions**.
 > The full QA lifecycle: test plan → user stories and acceptance criteria → manual test cases → defects → automated regression → CI → test summary.
@@ -77,6 +77,18 @@ npm run report           # open the HTML report
 ```
 
 Details, conventions and the current suite status are in [automation/README.md](automation/README.md).
+
+## Continuous integration
+
+Every push and pull request runs the whole suite in **GitHub Actions** ([workflow](.github/workflows/playwright.yml)) against a brand-new OrangeHRM:
+
+1. **Throwaway credentials:** random passwords generated per run and masked in the logs (no secrets stored, nothing real in the repo)
+2. **Unattended install:** [`docker/ci-install.sh`](docker/ci-install.sh) starts OrangeHRM 5.9 + MariaDB and installs it with OrangeHRM's bundled YAML-driven CLI installer, so there's no web wizard
+3. **Seed:** a Playwright `seed` project creates the little shared data a fresh install lacks (leave period, leave types, an employee and a disabled user). Every test creates the rest itself
+4. **Tests:** type check, then UI + API tests in Chromium (~2.5 min); the full job takes ~4 min
+5. **Results:** the HTML report is uploaded as a build artifact; on failure, traces/screenshots/videos and container logs too
+
+The first CI run caught a timing bug the local runs had missed (a list read mid-reload in US-AD-0001-TC-002), which was fixed and documented.
 
 ## How to read this project
 

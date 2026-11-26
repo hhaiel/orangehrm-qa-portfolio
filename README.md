@@ -98,4 +98,4 @@ Details, conventions and the current suite status are in [automation/README.md](
 
 ## About me
 
-[Your name], QA Tester. [LinkedIn] · [Email]
+Ariane Villanueva, QA Tester. www.linkedin.com/in/aryvillanueva/ · arianejvillanueva@gmail.com

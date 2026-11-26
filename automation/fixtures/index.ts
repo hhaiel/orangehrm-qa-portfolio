@@ -1,7 +1,8 @@
-import { expect, test as base, request, type APIRequestContext, type Browser, type BrowserContext, type Page } from '@playwright/test';
+import { test as base, request, type APIRequestContext, type Browser, type BrowserContext, type Page } from '@playwright/test';
 import { OrangeHrmApi } from '../api/OrangeHrmApi';
 import { LoginPage } from '../pages/LoginPage';
 import { env, STORAGE_STATE } from '../utils/env';
+import { httpLogin } from '../utils/httpLogin';
 
 export type TestPerson = {
   empNumber: number;
@@ -96,19 +97,8 @@ export const test = base.extend<Fixtures>({
     const contexts: APIRequestContext[] = [];
     await use(async (person) => {
       if (!person.username || !person.password) throw new Error(`${person.fullName} has no login (use withLogin: true).`);
-      // Empty session on purpose: otherwise the test's storageState (e.g. Admin) may be reused,
-      // and the login page would redirect to the Dashboard without a token.
-      const context = await request.newContext({ baseURL, storageState: { cookies: [], origins: [] } });
+      const context = await httpLogin(baseURL, person.username, person.password);
       contexts.push(context);
-      // The login form carries a CSRF token in the page HTML; post it back with the credentials.
-      const html = await (await context.get('/web/index.php/auth/login')).text();
-      const token = html.match(/:token="&quot;([^&]+)&quot;"/)?.[1];
-      expect(token, 'CSRF token on the login page').toBeTruthy();
-      const response = await context.post('/web/index.php/auth/validate', {
-        form: { _token: token!, username: person.username, password: person.password },
-        maxRedirects: 0,
-      });
-      expect(response.headers()['location'] ?? '', 'login should redirect to the dashboard').toContain('dashboard');
       return Object.assign(new OrangeHrmApi(context), { raw: context });
     });
     for (const context of contexts) await context.dispose();

@@ -18,7 +18,10 @@ export default defineConfig({
   // (pages stalled with images/fonts never returned). 1 worker is reliable.
   // Raise with WORKERS=n on a faster server (e.g. CI).
   workers: Number(process.env.WORKERS ?? 1),
-  reporter: [['html', { open: 'never' }], ['list']],
+  // In GitHub Actions the 'github' reporter adds failure annotations to the run summary.
+  reporter: process.env.CI
+    ? [['github'], ['html', { open: 'never' }], ['list']]
+    : [['html', { open: 'never' }], ['list']],
 
   use: {
     baseURL: process.env.BASE_URL ?? 'http://localhost:8080',
@@ -28,8 +31,12 @@ export default defineConfig({
   },
 
   projects: [
+    // 0. Creates the shared data a fresh install lacks (leave period/types, Ellie, disabled user).
+    //    Idempotent: does nothing on an install that already has it.
+    { name: 'seed', testMatch: /seed\.setup\.ts/ },
+
     // 1. Logs in once per role and saves the session, so tests don't repeat the login.
-    { name: 'setup', testMatch: /.*\.setup\.ts/ },
+    { name: 'setup', testMatch: /auth\.setup\.ts/, dependencies: ['seed'] },
 
     // 2. UI tests in Chromium (pick the role per spec with test.use).
     {

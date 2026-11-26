@@ -1,0 +1,96 @@
+name: Playwright tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: # run manually from the Actions tab
+
+concurrency:
+  group: playwright-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: UI + API tests (OrangeHRM 5.9 in Docker)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # The database and app only live for this job, so random passwords are generated per run
+      # (no secrets to manage, nothing real in the repo) and masked in the logs.
+      - name: Generate throwaway credentials
+        run: |
+          gen() { openssl rand -base64 24 | tr -dc 'A-Za-z0-9' | head -c 16; }
+          DB_PASSWORD=$(gen); DB_ROOT_PASSWORD=$(gen)
+          ADMIN_PASSWORD="Ci$(gen)9!"; TEST_USER_PASSWORD="Ci$(gen)7!"
+          for v in "$DB_PASSWORD" "$DB_ROOT_PASSWORD" "$ADMIN_PASSWORD" "$TEST_USER_PASSWORD"; do echo "::add-mask::$v"; done
+          cat > docker/.env <<EOF
+          DB_NAME=orangehrm
+          DB_USER=orangehrm
+          DB_PASSWORD=$DB_PASSWORD
+          DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
+          APP_PORT=8080
+          ADMIN_USERNAME=qa_admin
+          ADMIN_PASSWORD=$ADMIN_PASSWORD
+          EOF
+          cat > automation/.env <<EOF
+          BASE_URL=http://localhost:8080
+          ADMIN_USERNAME=qa_admin
+          ADMIN_PASSWORD=$ADMIN_PASSWORD
+          EMP_USERNAME=qa_av_emp
+          SUPER_USERNAME=qa_av_super
+          DISABLED_USERNAME=qa_av_disabled
+          TEST_USER_PASSWORD=$TEST_USER_PASSWORD
+          EOF
+          sed -i 's/^ *//' docker/.env automation/.env
+
+      - name: Start and install OrangeHRM (no wizard)
+        run: COMPOSE_PROJECT=orangehrm bash docker/ci-install.sh
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: automation/package-lock.json
+
+      - name: Install dependencies
+        working-directory: automation
+        run: npm ci
+
+      - name: Install Chromium
+        working-directory: automation
+        run: npx playwright install --with-deps chromium
+
+      - name: Type check
+        working-directory: automation
+        run: npm run typecheck
+
+      - name: Run Playwright tests (seed → login setup → UI + API)
+        working-directory: automation
+        run: npx playwright test
+
+      - name: Upload HTML report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: automation/playwright-report/
+          retention-days: 14
+
+      - name: Upload traces, screenshots and videos of failures
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: automation/test-results/
+          retention-days: 7
+
+      - name: OrangeHRM logs (on failure)
+        if: ${{ failure() }}
+        run: docker compose -p orangehrm logs --tail 200

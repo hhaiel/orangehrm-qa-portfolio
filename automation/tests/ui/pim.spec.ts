@@ -210,7 +210,7 @@ test.describe('PIM › Add Employee', () => {
     await expect(addPage.photoMessage()).toHaveText('Attachment Size Exceeded');
 
     // A file that is both the wrong type AND too large: only the size message is shown
-    // (the size check runs first). This is current behaviour, see DEF-007 (needs confirmation).
+    // (the size check runs first). Works as designed (DEF-007 was rejected); noted as a UX observation.
     await addPage.uploadPhoto(largePdf);
     await expect(addPage.photoMessage()).toHaveText('Attachment Size Exceeded');
   });

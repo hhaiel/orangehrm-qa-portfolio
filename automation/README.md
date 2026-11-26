@@ -86,5 +86,5 @@ With these settings the full suite (43 tests) passed in two consecutive runs (~4
 
 ### What automation changed in the manual results
 - **DEF-006 rejected:** the Password message *does* update after leaving the field, about 1 s later (async check). The manual check read it too early. Now a passing regression test.
-- **DEF-007 needs confirmation:** a small pdf correctly shows "File type not allowed"; only a pdf over 1 MB shows "Attachment Size Exceeded" (size is checked first).
+- **DEF-007 rejected:** a small pdf correctly shows "File type not allowed"; the tester's pdf was over 1 MB, so "Attachment Size Exceeded" was accurate (size is checked first). Kept as a UX observation.
 - **Answered:** deleting an employee also deletes their user account.

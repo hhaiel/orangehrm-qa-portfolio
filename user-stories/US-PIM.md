@@ -28,7 +28,7 @@
   - ✅ Username, Password and Confirm Password are required. ❌ An empty Confirm Password shows "Passwords do not match" instead of "Required" (DEF-005).
   - ✅ Username needs at least 5 characters ("Should be at least 5 characters") and must be unique, case-insensitively ("Username already exists" for `qa_av_emp` and `QA_AV_EMP`).
   - ✅ On Save, Password must have at least 8 characters ("Should have at least 8 characters") and at least 1 lower-case letter, 1 upper-case letter, 1 number and 1 special character (e.g. "Your password must contain minimum 1 upper-case letter"). One rule message shows at a time. A strength meter shows Very Weak / Weak / … while typing.
-  - ❌ After a failed save, the Password field keeps showing its old message (e.g. "Required") while typing, until Save is clicked again (DEF-006).
+  - ✅ After a failed save, the Password message updates about 1 s after leaving the field (asynchronous check). Earlier logged as DEF-006, now rejected as not reproducible (2026-11-26).
   - ✅ Confirm Password must match ("Passwords do not match").
 - **AC7:** ✅ Given valid input, when I click Save, then the employee's **Personal Details** page opens.
 - **AC8:** ✅ If login details were created, the user appears in Admin › User Management › Users with role **ESS** and the chosen status (e.g. `qa_av_disabled` / ESS / Disabled). If not, no user exists for that employee (e.g. Nina).

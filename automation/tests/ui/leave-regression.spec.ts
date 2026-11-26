@@ -45,7 +45,7 @@ test.describe('Leave › Entitlements (Admin)', () => {
       // The required "*" is drawn separately, so it isn't part of the label text.
       ['Add to', 'Individual Employee', 'Multiple Employees', 'Employee Name', 'Leave Type', 'Leave Period', 'Entitlement'],
     );
-    await expect(addPage.form.field('Leave Period').locator('.oxd-select-text-input')).toHaveText(/\d{4}-01-01 - \d{4}-12-31/);
+    await expect(addPage.form.selected('Leave Period')).toHaveText(/\d{4}-01-01 - \d{4}-12-31/);
 
     await addPage.save();
     for (const field of ['Employee Name', 'Leave Type', 'Entitlement']) {

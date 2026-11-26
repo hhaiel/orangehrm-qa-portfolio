@@ -90,15 +90,15 @@ automation/
 ```
 
 **Checklist**
-- [ ] Page objects for every screen under test, with no raw selectors inside spec files
-- [x] ~20 UI tests from your "Auto" cases (23 so far: all Leave + login). **Test titles start with the manual TC ID** for traceability, e.g. `test('US-LV-0002-TC-001 apply full-day leave', …)`
-- [ ] Tags: `@smoke` (5–6 critical tests) and `@regression` (all). Done for Login + Leave; PIM/Admin still to write
-- [ ] Role-based tests: the same page as Admin vs. ESS; ESS hitting Admin URLs is blocked
+- [x] Page objects for every screen under test, with no raw selectors inside spec files
+- [x] ~20 UI tests from your "Auto" cases (41: every manual case automated). **Test titles start with the manual TC ID** for traceability, e.g. `test('US-LV-0002-TC-001 apply full-day leave', …)`
+- [x] Tags: `@smoke` and `@regression` on every test
+- [x] Role-based tests: the same page as Admin vs. ESS; ESS hitting Admin URLs is blocked (US-AD-0002, US-LV-0003-TC-006)
 - [x] **API-driven setup:** create the employee + entitlement via `request` before leave tests, and clean up after (`fixtures/index.ts`, verified 0 leftovers)
 - [ ] 5–8 API tests on `/web/index.php/api/v2/...` (status codes, response fields, validation errors)
 - [x] Unique test data per run (`QA_PW <role> <suffix>`) so tests can run in parallel and re-run
 - [x] No `waitForTimeout`. Rely on auto-waiting and web-first assertions (`expect(locator).toBeVisible()`)
-- [ ] Run 3× in a row with no flaky failures (`npx playwright test --repeat-each=3`). Leave smoke: 3×5 green; full suite (25): 2 green runs at 1 worker
+- [ ] Run 3× in a row with no flaky failures (`npx playwright test --repeat-each=3`). Full suite (43): 2 runs, 1 flaky toast check found and fixed; toast tests then 2× green
 
 **Done when:** ~25 tests (UI + API) green locally, stable on repeat runs.
 

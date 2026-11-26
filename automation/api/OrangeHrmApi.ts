@@ -19,9 +19,9 @@ export class OrangeHrmApi {
 
   // ---------- PIM / Admin ----------
 
-  async createEmployee(firstName: string, lastName: string): Promise<number> {
+  async createEmployee(firstName: string, lastName: string, employeeId?: string): Promise<number> {
     const data = await this.ok(
-      await this.request.post(`${API}/pim/employees`, { data: { firstName, lastName } }),
+      await this.request.post(`${API}/pim/employees`, { data: { firstName, lastName, employeeId } }),
       'Create employee',
     );
     return data.empNumber;
@@ -45,13 +45,29 @@ export class OrangeHrmApi {
     );
   }
 
-  /** Deleting an employee also deletes their user account and leave records. */
+  /**
+   * Deleting an employee also deletes their user account and leave records.
+   * Used for cleanup, so records a test already deleted are skipped (one at a time; 404 is fine).
+   */
   async deleteEmployees(empNumbers: number[]) {
-    if (empNumbers.length === 0) return;
-    await this.ok(
-      await this.request.delete(`${API}/pim/employees`, { data: { ids: empNumbers } }),
-      'Delete employees',
-    );
+    for (const id of empNumbers) {
+      const response = await this.request.delete(`${API}/pim/employees`, { data: { ids: [id] } });
+      expect([200, 404], `Delete employee ${id}: ${await response.text()}`).toContain(response.status());
+    }
+  }
+
+  async personalDetails(empNumber: number): Promise<{ firstName: string; lastName: string; birthday: string | null }> {
+    return this.ok(await this.request.get(`${API}/pim/employees/${empNumber}/personal-details`), 'Get personal details');
+  }
+
+  async findUser(username: string): Promise<{ id: number; userName: string; status: boolean; userRole: { name: string }; employee: { empNumber: number } } | undefined> {
+    const users = await this.ok(await this.request.get(`${API}/admin/users?limit=200`), 'List users');
+    return users.find((u: { userName: string }) => u.userName === username);
+  }
+
+  async usersForEmployee(empNumber: number): Promise<number> {
+    const users = await this.ok(await this.request.get(`${API}/admin/users?limit=200`), 'List users');
+    return users.filter((u: { employee: { empNumber: number } }) => u.employee?.empNumber === empNumber).length;
   }
 
   // ---------- Leave ----------

@@ -5,6 +5,7 @@ import { env, STORAGE_STATE } from '../utils/env';
 
 export type TestPerson = {
   empNumber: number;
+  employeeId?: string;
   firstName: string;
   lastName: string;
   fullName: string;
@@ -14,13 +15,15 @@ export type TestPerson = {
 
 export type LoggedInUser = { context: BrowserContext; page: Page; api: OrangeHrmApi };
 
-type PersonOptions = { withLogin?: boolean; entitlementDays?: number; supervisor?: TestPerson };
+type PersonOptions = { withLogin?: boolean; entitlementDays?: number; supervisor?: TestPerson; employeeId?: boolean };
 
 type Fixtures = {
   /** API client logged in as Admin (for setup, checks and cleanup). */
   adminApi: OrangeHrmApi;
   /** Creates uniquely named employees for this test and deletes them afterwards. */
   createPerson: (role: string, options?: PersonOptions) => Promise<TestPerson>;
+  /** Registers an employee created through the UI, so it is deleted after the test. */
+  trackEmployee: (empNumber: number) => void;
   /** Opens a separate browser session logged in as the given person (UI login). */
   loginAs: (person: TestPerson) => Promise<LoggedInUser>;
   /** Creates a full-day holiday for this test and deletes it afterwards. */
@@ -29,7 +32,7 @@ type Fixtures = {
 
 const LEAVE_TYPE = 'QA_AV Vacation';
 
-function uniqueSuffix(): string {
+export function uniqueSuffix(): string {
   return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 }
 
@@ -40,17 +43,27 @@ export const test = base.extend<Fixtures>({
     await context.dispose();
   },
 
-  createPerson: async ({ adminApi }, use) => {
-    const created: number[] = [];
+  trackEmployee: async ({ adminApi }, use) => {
+    const tracked: number[] = [];
+    await use((empNumber) => {
+      tracked.push(empNumber);
+    });
+    // Cleanup runs even if the test failed. Deleting employees also removes their users and leave.
+    // Employees a test already deleted itself are skipped.
+    await adminApi.deleteEmployees(tracked);
+  },
+
+  createPerson: async ({ adminApi, trackEmployee }, use) => {
 
     await use(async (role, options = {}) => {
       const suffix = uniqueSuffix();
       const firstName = `QA_PW ${role}`;
       const lastName = suffix;
-      const empNumber = await adminApi.createEmployee(firstName, lastName);
-      created.push(empNumber);
+      const employeeId = options.employeeId ? `PW${suffix.slice(-8)}` : undefined;
+      const empNumber = await adminApi.createEmployee(firstName, lastName, employeeId);
+      trackEmployee(empNumber);
 
-      const person: TestPerson = { empNumber, firstName, lastName, fullName: `${firstName} ${lastName}` };
+      const person: TestPerson = { empNumber, firstName, lastName, fullName: `${firstName} ${lastName}`, employeeId };
 
       if (options.withLogin) {
         person.username = `qa_pw_${suffix}`;
@@ -65,9 +78,7 @@ export const test = base.extend<Fixtures>({
       }
       return person;
     });
-
-    // Cleanup runs even if the test failed. Deleting employees also removes their users and leave.
-    await adminApi.deleteEmployees(created);
+    // No cleanup here: every person is registered with trackEmployee, which deletes them.
   },
 
   createHoliday: async ({ adminApi }, use) => {

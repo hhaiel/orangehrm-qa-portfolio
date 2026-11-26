@@ -23,6 +23,11 @@ export class Form {
     return this.field(label).locator('.oxd-input-field-error-message');
   }
 
+  /** The value currently shown in a dropdown field. */
+  selected(label: string): Locator {
+    return this.field(label).locator('.oxd-select-text-input');
+  }
+
   /** Opens a custom dropdown and picks an option by its exact text. */
   async select(label: string, option: string) {
     const optionLocator = this.page.getByRole('option', { name: option, exact: true });
@@ -72,9 +77,13 @@ export class Form {
   }
 }
 
-/** The pop-up notification in the bottom-left corner ("Successfully Saved", errors, warnings). */
+/**
+ * The pop-up notifications in the bottom-left corner ("Successfully Saved", errors, warnings).
+ * Returns the container holding ALL toasts: OrangeHRM can show two at once (e.g. "Successfully
+ * Updated" plus "No Records Found" when a list becomes empty), and toContainText still works.
+ */
 export function toast(page: Page): Locator {
-  return page.locator('.oxd-toast');
+  return page.locator('.oxd-toast-container');
 }
 
 /** The confirmation dialog (e.g. "Updating Entitlement", "Are you Sure?"). */

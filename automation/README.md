@@ -30,10 +30,12 @@ automation/
 ├── pages/
 │   ├── LoginPage.ts
 │   ├── components/          ← Form (label-based fields, dropdowns, autocomplete, dates, toast), Navigation
-│   └── leave/               ← ApplyLeavePage, MyLeavePage, LeaveListPage, AddEntitlementPage
+│   ├── leave/               ← ApplyLeavePage, MyLeavePage, LeaveListPage, AddEntitlementPage
+│   ├── pim/                 ← AddEmployeePage, EmployeeListPage, PersonalDetailsPage
+│   └── admin/               ← SystemUsersPage, SaveUserPage
 ├── tests/
 │   ├── auth.setup.ts        ← logs in once per role, saves sessions to playwright/.auth/
-│   └── ui/                  ← login.spec.ts, leave.spec.ts (@smoke), leave-regression.spec.ts
+│   └── ui/                  ← login, leave (@smoke), leave-regression, pim, admin specs
 ├── utils/                   ← env.ts (settings, session paths), dates.ts (working days in the leave period)
 └── .env.example             ← copy to .env (git-ignored)
 ```
@@ -60,13 +62,16 @@ Verified: after repeated runs, 0 `QA_PW` employees, 0 `qa_pw_` users and 0 `QA_P
 | First login after the server is idle takes 10+ s (cold caches) | Setup timeout 90 s; login redirect wait 20 s |
 | Multi-user Leave flows take 15–40 s (saves take 4–6 s) | Leave spec timeout 90 s |
 
-With these settings the full suite passed **25/25 in two consecutive runs** (~2.5–2.9 min), and the Leave smoke tests passed 3× in a row.
+With these settings the full suite (43 tests) passed in two consecutive runs (~4 min each). One flaky toast check was found in run 1 and fixed (see below); all 16 toast-checking tests then passed twice.
 
 | Gotcha found while building | Fix |
 |---|---|
 | `browser.newContext()` inside a test inherits the test's `storageState`, so a "fresh" login started as Admin | `loginAs` passes an empty `storageState` |
 | Escape doesn't close OrangeHRM dropdowns; the next click closed it instead of opening it | Close by clicking the field again; `select()` only opens a closed list |
 | The required `*` isn't part of label text | Compare labels without `*` |
+| Two toasts can show at once ("Successfully Updated" + "No Records Found" when a list empties): strict-mode failure | `toast()` returns the toast container, which holds all toasts |
+| `getByText(/^…$/)` didn't match "(9) Records Found" (surrounding whitespace) | Unanchored regex |
+| Reading results right after Search returned an empty list | Wait for an expected row before reading |
 
 ## Status
 | Spec | Tests | Automates |
@@ -75,4 +80,11 @@ With these settings the full suite passed **25/25 in two consecutive runs** (~2.
 | `tests/ui/login.spec.ts` | 5 | US-AD-0001-TC-004 + LOGIN-001…004 |
 | `tests/ui/leave.spec.ts` | 5 | US-LV-0001-TC-003, US-LV-0002-TC-001, US-LV-0003-TC-002, US-LV-0003-TC-006, US-LV-0004-TC-001 (all `@smoke`) |
 | `tests/ui/leave-regression.spec.ts` | 13 | The other 12 Leave cases (`@regression`); US-LV-0001-TC-002 split in two, the `-1` part is `test.fail` (DEF-001) |
-| **Total** | **23 UI + 2 setup** | **All 17 Leave cases + 1 Admin case automated** |
+| `tests/ui/pim.spec.ts` | 11 | All 9 PIM cases; TC-003 and TC-005 split into several tests; `test.fail`: DEF-003, DEF-004, DEF-005 |
+| `tests/ui/admin.spec.ts` | 7 | US-AD-0001-TC-001…003, US-AD-0002-TC-001/002; `test.fail`: DEF-005 (Add User form) |
+| **Total** | **41 UI + 2 setup** | **All 32 manual test cases automated** (5 known-defect checks marked `test.fail`) |
+
+### What automation changed in the manual results
+- **DEF-006 rejected:** the Password message *does* update after leaving the field, about 1 s later (async check). The manual check read it too early. Now a passing regression test.
+- **DEF-007 needs confirmation:** a small pdf correctly shows "File type not allowed"; only a pdf over 1 MB shows "Attachment Size Exceeded" (size is checked first).
+- **Answered:** deleting an employee also deletes their user account.

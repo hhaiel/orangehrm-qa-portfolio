@@ -39,12 +39,12 @@
 ## Automation candidates
 | Test Case ID | Auto / Manual-only | Reason | Tag | Automated in (spec file) |
 |---|---|---|---|---|
-| US-AD-0001-TC-001 | Auto | Form validation | @regression | |
-| US-AD-0001-TC-002 | Auto | Create user + filters (clean up via API) | @smoke | |
-| US-AD-0001-TC-003 | Auto | Role change across two logins | @regression | |
+| US-AD-0001-TC-001 | Auto | Form validation | @regression | `automation/tests/ui/admin.spec.ts` ✅ (2 tests; Confirm Password part `test.fail`: DEF-005) |
+| US-AD-0001-TC-002 | Auto | Create user + filters (clean up via API) | @smoke | `automation/tests/ui/admin.spec.ts` ✅ |
+| US-AD-0001-TC-003 | Auto | Role change across two logins | @regression | `automation/tests/ui/admin.spec.ts` ✅ |
 | US-AD-0001-TC-004 | Auto | Login security messages | @smoke | `automation/tests/ui/login.spec.ts` ✅ |
-| US-AD-0002-TC-001 | Auto | Access control (UI + API 403 checks) | @smoke | |
-| US-AD-0002-TC-002 | Auto | Supervisor data scope | @regression | |
+| US-AD-0002-TC-001 | Auto | Access control (UI + API 403 checks) | @smoke | `automation/tests/ui/admin.spec.ts` ✅ |
+| US-AD-0002-TC-002 | Auto | Supervisor data scope | @regression | `automation/tests/ui/admin.spec.ts` ✅ |
 
 ## Execution log
 | Date | Environment / version | Executed | Pass | Fail | Blocked | Notes |

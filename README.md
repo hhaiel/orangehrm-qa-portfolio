@@ -29,9 +29,9 @@
 | User stories | 9 (Leave 4, PIM 3, Admin 2) |
 | Manual test cases written | 32 (Leave 17, PIM 9, Admin 6) |
 | Executed / Passed / Failed / Blocked | 32 / 26 / 6 / 0 (81% pass) |
-| Defects logged | 7 (0 High, 2 Medium, 5 Low; 1 needs confirmation) + 8 observations |
-| Automated tests (UI / API) | 23 / 0 (+2 auth setup), all passing: Login 5, Leave 18 (all 17 Leave cases). Phase 4 in progress |
-| Manual cases automated | [n] of [n] ([%]) |
+| Defects logged | 7: 6 open (2 Medium, 4 Low; 2 need confirmation), 1 rejected after automation (DEF-006) + 8 observations |
+| Automated tests (UI / API) | 41 / 0 (+2 auth setup): Login 5, Leave 18, PIM 11, Admin 7. **All 32 manual cases automated**; 5 known-defect checks marked `test.fail` |
+| Manual cases automated | 32 of 32 (100%) |
 
 **Top findings:**
 1. DEF-004 (Medium): Date of Birth accepts a future date
